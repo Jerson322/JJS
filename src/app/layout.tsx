@@ -37,7 +37,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 <Link href="/dashboard">Mi cuenta</Link>
                 {(session.user.role === "STAFF" ||
                   session.user.role === "ADMIN") && (
-                  <Link href="/admin/solicitudes">Panel admin</Link>
+                  <Link href="/admin/catalogo">Panel admin</Link>
                 )}
                 <form
                   action={async () => {
