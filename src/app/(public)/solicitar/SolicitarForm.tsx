@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useRef, useState, useTransition } from "react";
+import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import {
   submitPurchaseRequest,
   type SubmitPurchaseRequestState,
@@ -10,11 +10,19 @@ import type { ExtractedProductInfo } from "@/server/services/product-extraction/
 
 const initialState: SubmitPurchaseRequestState = {};
 
-export function SolicitarForm() {
+const URL_PATTERN = /^https?:\/\//i;
+
+interface SolicitarFormProps {
+  prefill?: string;
+}
+
+export function SolicitarForm({ prefill }: SolicitarFormProps) {
   const [state, formAction, pending] = useActionState(
     submitPurchaseRequest,
     initialState,
   );
+
+  const prefillIsUrl = !!prefill && URL_PATTERN.test(prefill);
 
   const productUrlRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -24,8 +32,8 @@ export function SolicitarForm() {
   const [detectError, setDetectError] = useState<string | null>(null);
   const [preview, setPreview] = useState<ExtractedProductInfo | null>(null);
 
-  function handleDetect() {
-    const url = productUrlRef.current?.value.trim();
+  function handleDetect(urlOverride?: string) {
+    const url = (urlOverride ?? productUrlRef.current?.value ?? "").trim();
     if (!url) {
       setDetectError("Pega primero el link del producto.");
       return;
@@ -57,6 +65,14 @@ export function SolicitarForm() {
     });
   }
 
+  useEffect(() => {
+    if (prefillIsUrl && prefill) {
+      handleDetect(prefill);
+    }
+    // Only run once, when the form first mounts with a prefilled link.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <form action={formAction} className="stack">
       <fieldset className="stack">
@@ -71,12 +87,13 @@ export function SolicitarForm() {
               type="url"
               placeholder="https://www.nike.com/... o https://www.apple.com/..."
               ref={productUrlRef}
+              defaultValue={prefillIsUrl ? prefill : undefined}
               style={{ flex: 1 }}
             />
             <button
               type="button"
               className="button"
-              onClick={handleDetect}
+              onClick={() => handleDetect()}
               disabled={isDetecting}
             >
               {isDetecting ? "Detectando..." : "Detectar datos"}
@@ -117,6 +134,7 @@ export function SolicitarForm() {
             rows={3}
             placeholder="Marca, modelo, color, talla, etc."
             ref={descriptionRef}
+            defaultValue={!prefillIsUrl ? prefill : undefined}
           />
         </div>
 

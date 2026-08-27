@@ -1,0 +1,145 @@
+.hero {
+  min-height: calc(100vh - 65px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 3rem 1.5rem;
+  background: #ffffff;
+  color: #111111;
+  text-align: center;
+}
+
+.eyebrow {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.title {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 700;
+  max-width: 40rem;
+  line-height: 1.15;
+}
+
+.searchForm {
+  width: 100%;
+  max-width: 720px;
+}
+
+.searchOuter {
+  position: relative;
+  border-radius: 999px;
+}
+
+.searchGlow {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  z-index: -1;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--angle),
+    #7c3aed,
+    #2563eb,
+    #06b6d4,
+    #22c55e,
+    #eab308,
+    #ef4444,
+    #7c3aed
+  );
+  filter: blur(22px) saturate(1.4);
+  opacity: 1;
+  animation: spin-angle 4s linear infinite;
+}
+
+.searchRing {
+  border-radius: 999px;
+  padding: 2.5px;
+  background: conic-gradient(
+    from var(--angle),
+    #7c3aed,
+    #2563eb,
+    #06b6d4,
+    #22c55e,
+    #eab308,
+    #ef4444,
+    #7c3aed
+  );
+  animation: spin-angle 4s linear infinite;
+}
+
+.searchWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.5rem 0.4rem 1.4rem;
+  border-radius: 999px;
+  background: #ffffff;
+}
+
+@property --angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes spin-angle {
+  to {
+    --angle: 360deg;
+  }
+}
+
+.searchIcon {
+  display: flex;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1.15rem;
+  padding: 0.9rem 0;
+  color: #111111;
+  min-width: 0;
+}
+
+.searchInput::placeholder {
+  color: #9ca3af;
+}
+
+.searchButton {
+  flex-shrink: 0;
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #111111;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.searchButton:hover {
+  background: #2a2a2a;
+}
+
+.hint {
+  font-size: 0.9rem;
+  color: #6b7280;
+  max-width: 32rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .searchGlow,
+  .searchRing {
+    animation: none;
+  }
+}

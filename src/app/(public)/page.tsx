@@ -1,24 +1,23 @@
-import Link from "next/link";
+import { HeroSearch } from "./HeroSearch";
+import styles from "./home.module.css";
 
 export default function HomePage() {
   return (
-    <div className="container stack">
-      <section className="stack">
-        <h1>¿Viste algo que quieres comprar afuera de Panamá?</h1>
-        <p>
-          Nosotros lo compramos por ti, lo traemos y te lo entregamos.
-          Cuéntanos qué necesitas, te damos una cotización con el costo del
-          producto, el envío y el arancel de aduana estimado, y tú decides si
-          avanzamos.
+    <>
+      <section className={styles.hero}>
+        <span className={styles.eyebrow}>Importaciones a Panamá</span>
+        <h1 className={styles.title}>
+          ¿Qué quieres importar hoy?
+        </h1>
+        <HeroSearch />
+        <p className={styles.hint}>
+          Pega el link del producto (Nike, Apple, Amazon, la tienda que sea) o
+          descríbelo con tus palabras. Nosotros lo compramos, lo traemos y te
+          lo entregamos en la puerta de tu casa.
         </p>
-        <div>
-          <Link href="/solicitar" className="button">
-            Solicitar una compra
-          </Link>
-        </div>
       </section>
 
-      <section className="card stack">
+      <section className="container card stack">
         <h2>¿Cómo funciona?</h2>
         <ol className="stack">
           <li>1. Nos cuentas qué producto quieres importar (link o descripción).</li>
@@ -28,6 +27,6 @@ export default function HomePage() {
           <li>5. Te entregamos el producto y puedes seguir el estado en todo momento.</li>
         </ol>
       </section>
-    </div>
+    </>
   );
 }
