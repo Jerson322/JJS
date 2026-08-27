@@ -173,21 +173,6 @@ export function SolicitarForm({ prefill }: SolicitarFormProps) {
         <legend>¿Dónde te lo entregamos?</legend>
 
         <div className="field">
-          <label htmlFor="province">Provincia</label>
-          <input id="province" name="province" required minLength={2} />
-        </div>
-
-        <div className="field">
-          <label htmlFor="district">Distrito</label>
-          <input id="district" name="district" required minLength={2} />
-        </div>
-
-        <div className="field">
-          <label htmlFor="corregimiento">Corregimiento (opcional)</label>
-          <input id="corregimiento" name="corregimiento" />
-        </div>
-
-        <div className="field">
           <label htmlFor="addressLine">Dirección exacta</label>
           <input
             id="addressLine"
@@ -195,6 +180,26 @@ export function SolicitarForm({ prefill }: SolicitarFormProps) {
             required
             minLength={5}
           />
+        </div>
+
+        <div className="field">
+          <label htmlFor="city">Ciudad</label>
+          <input id="city" name="city" required minLength={2} />
+        </div>
+
+        <div className="field">
+          <label htmlFor="state">Estado / provincia (opcional)</label>
+          <input id="state" name="state" />
+        </div>
+
+        <div className="field">
+          <label htmlFor="postalCode">Código postal (opcional)</label>
+          <input id="postalCode" name="postalCode" />
+        </div>
+
+        <div className="field">
+          <label htmlFor="country">País</label>
+          <input id="country" name="country" required minLength={2} />
         </div>
 
         <div className="field">

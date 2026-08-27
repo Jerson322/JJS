@@ -50,8 +50,11 @@ export default async function SolicitudDetailPage(
         <h2>Dirección de entrega</h2>
         <p>{request.destinationAddress.addressLine}</p>
         <p>
-          {request.destinationAddress.district},{" "}
-          {request.destinationAddress.province}
+          {request.destinationAddress.city}
+          {request.destinationAddress.state
+            ? `, ${request.destinationAddress.state}`
+            : ""}
+          , {request.destinationAddress.country}
         </p>
         <p>Tel: {request.destinationAddress.phone}</p>
       </div>

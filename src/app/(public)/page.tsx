@@ -1,3 +1,4 @@
+import { BrandCarousel } from "./BrandCarousel";
 import { HeroSearch } from "./HeroSearch";
 import styles from "./home.module.css";
 
@@ -5,7 +6,7 @@ export default function HomePage() {
   return (
     <>
       <section className={styles.hero}>
-        <span className={styles.eyebrow}>Importaciones a Panamá</span>
+        <span className={styles.eyebrow}>Importaciones desde EEUU</span>
         <h1 className={styles.title}>
           ¿Qué quieres importar hoy?
         </h1>
@@ -16,6 +17,8 @@ export default function HomePage() {
           lo entregamos en la puerta de tu casa.
         </p>
       </section>
+
+      <BrandCarousel />
 
       <section className="container card stack">
         <h2>¿Cómo funciona?</h2>

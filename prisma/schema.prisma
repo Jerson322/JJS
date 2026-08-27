@@ -59,10 +59,11 @@ model Address {
   userId         String
   user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   label          String?
-  province       String
-  district       String
-  corregimiento  String?
   addressLine    String
+  city           String
+  state          String?
+  postalCode     String?
+  country        String
   referencePoint String?
   phone          String
   isDefault      Boolean           @default(false)
@@ -156,6 +157,35 @@ model StatusEvent {
 
   @@index([purchaseRequestId])
   @@map("status_events")
+}
+
+model Brand {
+  id        String           @id @default(cuid())
+  name      String           @unique
+  slug      String           @unique
+  isActive  Boolean          @default(true)
+  sortOrder Int              @default(0)
+  products  CatalogProduct[]
+  createdAt DateTime         @default(now())
+
+  @@map("brands")
+}
+
+model CatalogProduct {
+  id          String   @id @default(cuid())
+  brandId     String
+  brand       Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  imageUrl    String?
+  price       Decimal? @db.Decimal(10, 2)
+  productUrl  String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([brandId, isActive])
+  @@map("catalog_products")
 }
 
 model DutyRateConfig {

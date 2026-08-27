@@ -2,10 +2,11 @@ import { z } from "zod";
 
 export const addressSchema = z.object({
   label: z.string().optional(),
-  province: z.string().min(2),
-  district: z.string().min(2),
-  corregimiento: z.string().optional(),
   addressLine: z.string().min(5),
+  city: z.string().min(2),
+  state: z.string().optional(),
+  postalCode: z.string().optional(),
+  country: z.string().min(2),
   referencePoint: z.string().optional(),
   phone: z.string().min(6),
 });

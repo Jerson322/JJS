@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Tienda de Importación",
-  description: "Compramos y te enviamos lo que necesites importar a Panamá.",
+  description: "Compramos y te enviamos lo que necesites importar desde tus tiendas favoritas.",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
