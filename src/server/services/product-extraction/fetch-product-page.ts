@@ -75,8 +75,10 @@ export async function fetchProductPage(rawUrl: string): Promise<string> {
         signal: controller.signal,
         headers: {
           "User-Agent":
-            "Mozilla/5.0 (compatible; TiendaImportacionBot/1.0; +https://tienda-importacion.local)",
-          Accept: "text/html",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+          Accept:
+            "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+          "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
         },
       });
     } finally {
@@ -90,6 +92,12 @@ export async function fetchProductPage(rawUrl: string): Promise<string> {
       }
       currentUrl = new URL(location, url).toString();
       continue;
+    }
+
+    if (response.status === 403 || response.status === 429) {
+      throw new Error(
+        "Esa tienda está bloqueando la detección automática. Completa los datos manualmente.",
+      );
     }
 
     if (!response.ok) {
