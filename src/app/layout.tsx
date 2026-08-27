@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { Footer } from "@/components/Footer";
 import { auth, signOut } from "@/server/auth/auth.config";
 import "./globals.css";
 
@@ -29,6 +30,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <Link href="/">Tienda Importación</Link>
           <div className="links">
             <Link href="/solicitar">Solicitar</Link>
+            <Link href="/#como-funciona">Cómo funciona</Link>
+            <Link href="/#faq">FAQ</Link>
             {session?.user ? (
               <>
                 <Link href="/dashboard">Mi cuenta</Link>
@@ -56,6 +59,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           </div>
         </nav>
         <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );
