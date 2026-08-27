@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import {
   submitPurchaseRequest,
@@ -12,18 +13,23 @@ const initialState: SubmitPurchaseRequestState = {};
 
 const URL_PATTERN = /^https?:\/\//i;
 
+const PENDING_STORAGE_KEY = "pendingSolicitud";
+
 interface SolicitarFormProps {
   prefill?: string;
+  isAuthenticated: boolean;
 }
 
-export function SolicitarForm({ prefill }: SolicitarFormProps) {
+export function SolicitarForm({ prefill, isAuthenticated }: SolicitarFormProps) {
   const [state, formAction, pending] = useActionState(
     submitPurchaseRequest,
     initialState,
   );
+  const router = useRouter();
 
   const prefillIsUrl = !!prefill && URL_PATTERN.test(prefill);
 
+  const formRef = useRef<HTMLFormElement>(null);
   const productUrlRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
@@ -66,15 +72,52 @@ export function SolicitarForm({ prefill }: SolicitarFormProps) {
   }
 
   useEffect(() => {
+    // If the user comes back from login/registro, restore what they had
+    // typed before we sent them there to finish creating their account.
+    const pendingRaw = sessionStorage.getItem(PENDING_STORAGE_KEY);
+    if (pendingRaw && isAuthenticated && formRef.current) {
+      sessionStorage.removeItem(PENDING_STORAGE_KEY);
+      try {
+        const pending: Record<string, string> = JSON.parse(pendingRaw);
+        for (const [name, value] of Object.entries(pending)) {
+          const field = formRef.current.elements.namedItem(name);
+          if (
+            field instanceof HTMLInputElement ||
+            field instanceof HTMLTextAreaElement
+          ) {
+            field.value = value;
+          }
+        }
+      } catch {
+        // Ignore corrupted storage, user just retypes the form.
+      }
+      return;
+    }
+
     if (prefillIsUrl && prefill) {
       handleDetect(prefill);
     }
-    // Only run once, when the form first mounts with a prefilled link.
+    // Only run once, when the form first mounts.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    if (isAuthenticated) return;
+
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(event.currentTarget).entries());
+    sessionStorage.setItem(PENDING_STORAGE_KEY, JSON.stringify(data));
+    router.push("/registro?callbackUrl=" + encodeURIComponent("/solicitar"));
+  }
+
   return (
-    <form action={formAction} className="stack">
+    <form ref={formRef} action={formAction} onSubmit={handleSubmit} className="stack">
+      {!isAuthenticated && (
+        <p style={{ color: "#6b7280" }}>
+          Puedes llenar todo esto sin cuenta. Solo te pediremos crear una al
+          final, para que puedas darle seguimiento a tu pedido.
+        </p>
+      )}
       <fieldset className="stack">
         <legend>¿Qué quieres importar?</legend>
 
@@ -218,7 +261,17 @@ export function SolicitarForm({ prefill }: SolicitarFormProps) {
         </div>
       </fieldset>
 
-      {state.error && <p className="error">{state.error}</p>}
+      {state.error && (
+        <p className="error">
+          {state.error}
+          {state.requiresAccount && (
+            <>
+              {" "}
+              <a href="/registro">Crea una cuenta</a>.
+            </>
+          )}
+        </p>
+      )}
 
       <button className="button" type="submit" disabled={pending}>
         {pending ? "Enviando..." : "Enviar solicitud"}

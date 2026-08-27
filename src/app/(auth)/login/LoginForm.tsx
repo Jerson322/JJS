@@ -5,7 +5,11 @@ import { loginAction, type LoginState } from "./actions";
 
 const initialState: LoginState = {};
 
-export function LoginForm() {
+interface LoginFormProps {
+  callbackUrl?: string;
+}
+
+export function LoginForm({ callbackUrl }: LoginFormProps) {
   const [state, formAction, pending] = useActionState(
     loginAction,
     initialState,
@@ -13,6 +17,9 @@ export function LoginForm() {
 
   return (
     <form action={formAction} className="stack card">
+      {callbackUrl && (
+        <input type="hidden" name="callbackUrl" value={callbackUrl} />
+      )}
       <div className="field">
         <label htmlFor="email">Correo</label>
         <input id="email" name="email" type="email" required />

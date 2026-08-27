@@ -8,23 +8,33 @@ import {
 
 const initialState: RegisterState = {};
 
-export function RegistroForm() {
+interface RegistroFormProps {
+  callbackUrl?: string;
+}
+
+export function RegistroForm({ callbackUrl }: RegistroFormProps) {
   const [state, formAction, pending] = useActionState(
     registerCustomer,
     initialState,
   );
 
-  if (state.success) {
+  if (state.createdButNeedsManualLogin) {
     return (
       <p className="card">
         Cuenta creada. Ya puedes{" "}
-        <a href="/login">iniciar sesión</a>.
+        <a href={callbackUrl ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/login"}>
+          iniciar sesión
+        </a>
+        .
       </p>
     );
   }
 
   return (
     <form action={formAction} className="stack card">
+      {callbackUrl && (
+        <input type="hidden" name="callbackUrl" value={callbackUrl} />
+      )}
       <div className="field">
         <label htmlFor="name">Nombre completo</label>
         <input id="name" name="name" required minLength={2} />

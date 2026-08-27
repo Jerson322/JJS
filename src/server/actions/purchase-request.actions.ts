@@ -2,18 +2,30 @@
 
 import { redirect } from "next/navigation";
 import { submitPurchaseRequestSchema } from "@/lib/validators/purchase-request.schema";
-import { requireUser } from "@/server/auth/rbac";
+import { auth } from "@/server/auth/auth.config";
 import { prisma } from "@/server/db/client";
 
 export interface SubmitPurchaseRequestState {
   error?: string;
+  requiresAccount?: boolean;
 }
 
 export async function submitPurchaseRequest(
   _prevState: SubmitPurchaseRequestState,
   formData: FormData,
 ): Promise<SubmitPurchaseRequestState> {
-  const user = await requireUser();
+  // The form itself is public; browsers with JS redirect to crear cuenta
+  // before ever reaching here. This is the fallback for that redirect not
+  // having happened (e.g. JS disabled) — never create a request without a
+  // real account behind it.
+  const session = await auth();
+  if (!session?.user) {
+    return {
+      requiresAccount: true,
+      error: "Necesitas una cuenta para finalizar la solicitud.",
+    };
+  }
+  const user = session.user;
 
   const parsed = submitPurchaseRequestSchema.safeParse({
     productUrl: formData.get("productUrl") || "",

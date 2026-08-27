@@ -1,12 +1,14 @@
 "use server";
 
 import bcrypt from "bcryptjs";
+import { AuthError } from "next-auth";
 import { registerSchema } from "@/lib/validators/auth.schema";
+import { signIn } from "@/server/auth/auth.config";
 import { prisma } from "@/server/db/client";
 
 export interface RegisterState {
   error?: string;
-  success?: boolean;
+  createdButNeedsManualLogin?: boolean;
 }
 
 export async function registerCustomer(
@@ -43,5 +45,23 @@ export async function registerCustomer(
     },
   });
 
-  return { success: true };
+  const callbackUrl = formData.get("callbackUrl");
+
+  try {
+    await signIn("credentials", {
+      email: parsed.data.email,
+      password: parsed.data.password,
+      redirectTo:
+        typeof callbackUrl === "string" && callbackUrl.startsWith("/")
+          ? callbackUrl
+          : "/dashboard",
+    });
+    return {};
+  } catch (error) {
+    if (error instanceof AuthError) {
+      // Account was created; let the user log in manually as a fallback.
+      return { createdButNeedsManualLogin: true };
+    }
+    throw error;
+  }
 }

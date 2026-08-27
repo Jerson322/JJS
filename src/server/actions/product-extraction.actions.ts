@@ -1,7 +1,6 @@
 "use server";
 
 import { z } from "zod";
-import { requireUser } from "@/server/auth/rbac";
 import { extractProductInfo } from "@/server/services/product-extraction/extract-product-info";
 import type { ExtractedProductInfo } from "@/server/services/product-extraction/extract-product-info";
 
@@ -12,11 +11,11 @@ export interface ExtractProductInfoResult {
   error?: string;
 }
 
+// Intentionally open to anonymous visitors: this only reads public product
+// metadata to help autofill the request form, it never touches purchase data.
 export async function extractProductInfoAction(
   url: string,
 ): Promise<ExtractProductInfoResult> {
-  await requireUser();
-
   const parsed = urlSchema.safeParse(url);
   if (!parsed.success) {
     return { error: "Ese link no parece válido." };

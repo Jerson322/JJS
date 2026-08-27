@@ -12,10 +12,14 @@ export async function loginAction(
   formData: FormData,
 ): Promise<LoginState> {
   try {
+    const callbackUrl = formData.get("callbackUrl");
     await signIn("credentials", {
       email: formData.get("email"),
       password: formData.get("password"),
-      redirectTo: "/dashboard",
+      redirectTo:
+        typeof callbackUrl === "string" && callbackUrl.startsWith("/")
+          ? callbackUrl
+          : "/dashboard",
     });
     return {};
   } catch (error) {
