@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CUSTOMER
+  STAFF
+  ADMIN
+}
+
+enum RequestStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  QUOTED
+  QUOTE_REJECTED
+  AWAITING_PAYMENT
+  PAID
+  PURCHASED
+  SHIPPED_TO_WAREHOUSE
+  IN_TRANSIT_INTL
+  IN_CUSTOMS
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id              String            @id @default(cuid())
+  email           String            @unique
+  passwordHash    String
+  name            String
+  phone           String?
+  role            Role              @default(CUSTOMER)
+  addresses       Address[]
+  requests        PurchaseRequest[] @relation("CustomerRequests")
+  handledRequests PurchaseRequest[] @relation("StaffHandler")
+  quotesCreated   Quote[]           @relation("QuoteCreatedBy")
+  statusEvents    StatusEvent[]     @relation("StatusEventActor")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@map("users")
+}
+
+model Address {
+  id             String            @id @default(cuid())
+  userId         String
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label          String?
+  province       String
+  district       String
+  corregimiento  String?
+  addressLine    String
+  referencePoint String?
+  phone          String
+  isDefault      Boolean           @default(false)
+  requests       PurchaseRequest[]
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([userId])
+  @@map("addresses")
+}
+
+model PurchaseRequest {
+  id                     String        @id @default(cuid())
+  customerId             String
+  customer               User          @relation("CustomerRequests", fields: [customerId], references: [id])
+  assignedStaffId        String?
+  assignedStaff          User?         @relation("StaffHandler", fields: [assignedStaffId], references: [id])
+  productUrl             String?
+  description            String
+  quantity               Int           @default(1)
+  estimatedDeclaredValue Decimal?      @db.Decimal(10, 2)
+  destinationAddressId   String
+  destinationAddress     Address       @relation(fields: [destinationAddressId], references: [id])
+  status                 RequestStatus @default(SUBMITTED)
+  notes                  String?
+  quotes                 Quote[]
+  payments               Payment[]
+  events                 StatusEvent[]
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+
+  @@index([customerId])
+  @@index([assignedStaffId])
+  @@index([status])
+  @@map("purchase_requests")
+}
+
+model Quote {
+  id                 String           @id @default(cuid())
+  purchaseRequestId  String
+  purchaseRequest    PurchaseRequest  @relation(fields: [purchaseRequestId], references: [id], onDelete: Cascade)
+  itemCost           Decimal          @db.Decimal(10, 2)
+  serviceFee         Decimal          @db.Decimal(10, 2)
+  intlShippingCost   Decimal          @db.Decimal(10, 2)
+  estimatedDuty      Decimal          @db.Decimal(10, 2)
+  dutyCalcSnapshot   Json
+  totalAmount        Decimal          @db.Decimal(10, 2)
+  currency           String           @default("USD")
+  expiresAt          DateTime?
+  approvedAt         DateTime?
+  rejectedAt         DateTime?
+  createdByStaffId   String
+  createdByStaff     User             @relation("QuoteCreatedBy", fields: [createdByStaffId], references: [id])
+  payments           Payment[]
+  createdAt          DateTime         @default(now())
+
+  @@index([purchaseRequestId])
+  @@map("quotes")
+}
+
+model Payment {
+  id                  String          @id @default(cuid())
+  purchaseRequestId   String
+  purchaseRequest     PurchaseRequest @relation(fields: [purchaseRequestId], references: [id])
+  quoteId             String
+  quote               Quote           @relation(fields: [quoteId], references: [id])
+  amount              Decimal         @db.Decimal(10, 2)
+  provider            String
+  providerRef         String?
+  status              PaymentStatus   @default(PENDING)
+  confirmedByStaffId  String?
+  proofOfPaymentUrl   String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([purchaseRequestId])
+  @@index([quoteId])
+  @@map("payments")
+}
+
+model StatusEvent {
+  id                String          @id @default(cuid())
+  purchaseRequestId String
+  purchaseRequest   PurchaseRequest @relation(fields: [purchaseRequestId], references: [id], onDelete: Cascade)
+  fromStatus        RequestStatus?
+  toStatus          RequestStatus
+  actorUserId       String?
+  actor             User?           @relation("StatusEventActor", fields: [actorUserId], references: [id])
+  note              String?
+  createdAt         DateTime        @default(now())
+
+  @@index([purchaseRequestId])
+  @@map("status_events")
+}
+
+model DutyRateConfig {
+  id            String    @id @default(cuid())
+  category      String
+  ratePercent   Decimal   @db.Decimal(5, 2)
+  minThreshold  Decimal?  @db.Decimal(10, 2)
+  flatFee       Decimal?  @db.Decimal(10, 2)
+  effectiveFrom DateTime  @default(now())
+  effectiveTo   DateTime?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+
+  @@index([category, isActive])
+  @@map("duty_rate_configs")
+}
