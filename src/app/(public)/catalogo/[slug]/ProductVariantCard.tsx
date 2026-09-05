@@ -87,7 +87,9 @@ export function ProductVariantCard({
         <div className={styles.productImagePlaceholder}>{brandName}</div>
       )}
 
-      <strong>{productName}</strong>
+      <strong className={styles.productName} title={productName}>
+        {productName}
+      </strong>
 
       {current.price != null && (
         <span className={styles.productPrice}>${current.price}</span>
@@ -99,6 +101,7 @@ export function ProductVariantCard({
             <button
               key={capacity}
               type="button"
+              title={capacity}
               className={`${styles.variantPill} ${
                 current.capacity === capacity ? styles.variantPillActive : ""
               }`}
@@ -129,7 +132,10 @@ export function ProductVariantCard({
       )}
 
       {(current.color || current.capacity) && (
-        <span className={styles.variantLabel}>
+        <span
+          className={styles.variantLabel}
+          title={[current.capacity, current.color].filter(Boolean).join(" · ")}
+        >
           {[current.capacity, current.color].filter(Boolean).join(" · ")}
         </span>
       )}
@@ -139,7 +145,7 @@ export function ProductVariantCard({
           current.productUrl ||
             `${productName} ${[current.capacity, current.color].filter(Boolean).join(" ")} (${brandName})`,
         )}`}
-        className="button"
+        className={`button ${styles.requestButton}`}
       >
         Solicitar este producto
       </Link>

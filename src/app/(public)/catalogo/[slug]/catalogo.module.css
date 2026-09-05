@@ -18,6 +18,15 @@
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+  height: 400px;
+  overflow: hidden;
+}
+
+.productName {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .productImage {
@@ -26,6 +35,7 @@
   object-fit: contain;
   border-radius: 6px;
   background: rgba(128, 128, 128, 0.08);
+  flex-shrink: 0;
 }
 
 .productImagePlaceholder {
@@ -38,15 +48,18 @@
   justify-content: center;
   color: #9ca3af;
   font-size: 0.85rem;
+  flex-shrink: 0;
 }
 
 .productPrice {
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 .carousel {
   position: relative;
   width: 100%;
+  flex-shrink: 0;
 }
 
 .carouselImage {
@@ -111,8 +124,12 @@
 
 .variantOptions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.4rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-shrink: 0;
+  padding-bottom: 2px;
 }
 
 .variantPill {
@@ -122,6 +139,11 @@
   padding: 0.2rem 0.65rem;
   font-size: 0.8rem;
   cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
 }
 
 .variantPillActive {
@@ -133,10 +155,12 @@
 .colorSwatch {
   width: 22px;
   height: 22px;
+  min-width: 22px;
   border-radius: 999px;
   border: 1px solid rgba(128, 128, 128, 0.35);
   cursor: pointer;
   padding: 0;
+  flex-shrink: 0;
 }
 
 .colorSwatchActive {
@@ -145,6 +169,16 @@
 }
 
 .variantLabel {
+  display: block;
   font-size: 0.8rem;
   color: #9ca3af;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+}
+
+.requestButton {
+  margin-top: auto;
+  flex-shrink: 0;
 }

@@ -78,7 +78,9 @@ export default async function CatalogoBrandPage(
                     {brand.name}
                   </div>
                 )}
-                <strong>{product.name}</strong>
+                <strong className={styles.productName} title={product.name}>
+                  {product.name}
+                </strong>
                 {product.price != null && (
                   <span className={styles.productPrice}>
                     ${product.price.toString()}
@@ -88,7 +90,7 @@ export default async function CatalogoBrandPage(
                   href={`/solicitar?prefill=${encodeURIComponent(
                     product.productUrl || `${product.name} (${brand.name})`,
                   )}`}
-                  className="button"
+                  className={`button ${styles.requestButton}`}
                 >
                   Solicitar este producto
                 </Link>
