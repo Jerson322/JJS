@@ -4,6 +4,7 @@ export interface ExtractedProductInfo {
   title: string | null;
   description: string | null;
   image: string | null;
+  images: string[];
   price: number | null;
   currency: string | null;
   brand: string | null;
@@ -36,6 +37,13 @@ function toNumber(value: string | number | undefined): number | null {
 function firstOf<T>(value: T | T[] | undefined): T | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
+
+function toArray<T>(value: T | T[] | undefined): T[] {
+  if (value == null) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
+const MAX_IMAGES = 12;
 
 function findProductNode(node: unknown): JsonLdProduct | null {
   if (Array.isArray(node)) {
@@ -91,8 +99,20 @@ export function parseProductHtml(html: string): ExtractedProductInfo {
   const description =
     jsonLdProduct?.description ?? meta("og:description") ?? meta("description");
 
-  const image =
-    firstOf(jsonLdProduct?.image) ?? meta("og:image") ?? null;
+  const ogImages = $('meta[property="og:image"], meta[name="og:image"]')
+    .map((_, el) => $(el).attr("content"))
+    .toArray()
+    .filter((src): src is string => Boolean(src));
+
+  const images = Array.from(
+    new Set(
+      [...toArray(jsonLdProduct?.image), ...ogImages].filter((src) =>
+        /^https?:\/\//.test(src),
+      ),
+    ),
+  ).slice(0, MAX_IMAGES);
+
+  const image = images[0] ?? null;
 
   const price =
     toNumber(offer?.price) ??
@@ -109,7 +129,8 @@ export function parseProductHtml(html: string): ExtractedProductInfo {
   return {
     title: title || null,
     description: description || null,
-    image: image || null,
+    image,
+    images,
     price,
     currency: currency || null,
     brand: brandName,

@@ -15,11 +15,14 @@ export async function createCatalogProductAction(
 ): Promise<CreateCatalogProductState> {
   await requireRole(["STAFF", "ADMIN"]);
 
+  const images = formData.getAll("images").filter((v): v is string => typeof v === "string" && v.length > 0);
+
   const parsed = createCatalogProductSchema.safeParse({
     brandId: formData.get("brandId"),
     name: formData.get("name"),
     description: formData.get("description") || undefined,
     imageUrl: formData.get("imageUrl") || "",
+    images,
     price: formData.get("price") || undefined,
     productUrl: formData.get("productUrl") || "",
   });
@@ -28,12 +31,19 @@ export async function createCatalogProductAction(
     return { error: "Datos inválidos. Revisa el formulario." };
   }
 
+  const productImages = parsed.data.images.length > 0
+    ? parsed.data.images
+    : parsed.data.imageUrl
+      ? [parsed.data.imageUrl]
+      : [];
+
   await prisma.catalogProduct.create({
     data: {
       brandId: parsed.data.brandId,
       name: parsed.data.name,
       description: parsed.data.description,
-      imageUrl: parsed.data.imageUrl || null,
+      imageUrl: productImages[0] || null,
+      images: productImages,
       price: parsed.data.price,
       productUrl: parsed.data.productUrl || null,
     },

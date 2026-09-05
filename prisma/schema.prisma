@@ -178,6 +178,7 @@ model CatalogProduct {
   name        String
   description String?
   imageUrl    String?
+  images      String[] @default([])
   price       Decimal? @db.Decimal(10, 2)
   productUrl  String?
   isActive    Boolean  @default(true)

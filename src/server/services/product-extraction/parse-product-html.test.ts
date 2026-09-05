@@ -80,6 +80,32 @@ describe("parseProductHtml", () => {
     expect(result.currency).toBe("USD");
   });
 
+  it("collects every image from JSON-LD and og:image tags", () => {
+    const html = `
+      <html><head>
+        <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": "Zapatillas Azules",
+            "image": ["https://example.com/1.jpg", "https://example.com/2.jpg"]
+          }
+        </script>
+        <meta property="og:image" content="https://example.com/2.jpg" />
+        <meta property="og:image" content="https://example.com/3.jpg" />
+      </head><body></body></html>
+    `;
+
+    const result = parseProductHtml(html);
+
+    expect(result.images).toEqual([
+      "https://example.com/1.jpg",
+      "https://example.com/2.jpg",
+      "https://example.com/3.jpg",
+    ]);
+    expect(result.image).toBe("https://example.com/1.jpg");
+  });
+
   it("returns nulls when nothing usable is present", () => {
     const result = parseProductHtml("<html><head></head><body></body></html>");
 

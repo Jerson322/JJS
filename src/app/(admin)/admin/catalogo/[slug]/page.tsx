@@ -47,14 +47,24 @@ export default async function AdminCatalogoBrandPage(
               style={{ display: "flex", gap: "1rem", alignItems: "center" }}
             >
               {product.imageUrl && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={product.imageUrl}
-                  alt=""
-                  width={64}
-                  height={64}
-                  style={{ objectFit: "contain" }}
-                />
+                <div style={{ position: "relative" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={product.imageUrl}
+                    alt=""
+                    width={64}
+                    height={64}
+                    style={{ objectFit: "contain" }}
+                  />
+                  {product.images.length > 1 && (
+                    <span
+                      className="badge"
+                      style={{ position: "absolute", bottom: -4, right: -4 }}
+                    >
+                      +{product.images.length - 1}
+                    </span>
+                  )}
+                </div>
               )}
               <div style={{ flex: 1 }}>
                 <strong>{product.name}</strong>

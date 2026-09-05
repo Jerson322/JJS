@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/server/db/client";
+import { ProductImageCarousel } from "./ProductImageCarousel";
 import styles from "./catalogo.module.css";
 
 // Sin llamadas a APIs dinamicas (cookies/headers), Next la trataria como
@@ -48,13 +49,8 @@ export default async function CatalogoBrandPage(
         <div className={styles.grid}>
           {brand.products.map((product) => (
             <div key={product.id} className={styles.productCard}>
-              {product.imageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={product.imageUrl}
-                  alt={product.name}
-                  className={styles.productImage}
-                />
+              {product.images.length > 0 ? (
+                <ProductImageCarousel images={product.images} alt={product.name} />
               ) : (
                 <div className={styles.productImagePlaceholder}>
                   {brand.name}

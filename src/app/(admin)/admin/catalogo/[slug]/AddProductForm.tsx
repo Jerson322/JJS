@@ -29,6 +29,20 @@ export function AddProductForm({ brandId, brandSlug }: AddProductFormProps) {
   const [isDetecting, startDetecting] = useTransition();
   const [detectError, setDetectError] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [detectedImages, setDetectedImages] = useState<string[]>([]);
+  const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
+
+  function toggleImage(url: string) {
+    setSelectedImages((prev) => {
+      const next = new Set(prev);
+      if (next.has(url)) {
+        next.delete(url);
+      } else {
+        next.add(url);
+      }
+      return next;
+    });
+  }
 
   function handleDetect() {
     const url = productUrlRef.current?.value.trim();
@@ -51,13 +65,19 @@ export function AddProductForm({ brandId, brandSlug }: AddProductFormProps) {
       if (priceRef.current && result.data.price != null) {
         priceRef.current.value = String(result.data.price);
       }
-      if (imageRef.current && result.data.image) {
-        imageRef.current.value = result.data.image;
-        setPreviewImage(result.data.image);
-      }
       if (descriptionRef.current && result.data.description) {
         descriptionRef.current.value = result.data.description;
       }
+
+      const images = result.data.images ?? [];
+      setDetectedImages(images);
+      setSelectedImages(new Set(images));
+
+      const cover = images[0] ?? result.data.image;
+      if (imageRef.current && cover) {
+        imageRef.current.value = cover;
+      }
+      setPreviewImage(cover ?? null);
     });
   }
 
@@ -65,6 +85,9 @@ export function AddProductForm({ brandId, brandSlug }: AddProductFormProps) {
     <form action={formAction} className="stack card">
       <input type="hidden" name="brandId" value={brandId} />
       <input type="hidden" name="brandSlug" value={brandSlug} />
+      {Array.from(selectedImages).map((url) => (
+        <input key={url} type="hidden" name="images" value={url} />
+      ))}
 
       <div className="field">
         <label htmlFor="productUrl">Link del producto</label>
@@ -106,7 +129,7 @@ export function AddProductForm({ brandId, brandSlug }: AddProductFormProps) {
       </div>
 
       <div className="field">
-        <label htmlFor="imageUrl">Imagen (URL, opcional)</label>
+        <label htmlFor="imageUrl">Imagen principal (URL, opcional)</label>
         <input
           id="imageUrl"
           name="imageUrl"
@@ -126,6 +149,49 @@ export function AddProductForm({ brandId, brandSlug }: AddProductFormProps) {
           />
         )}
       </div>
+
+      {detectedImages.length > 1 && (
+        <div className="field">
+          <label>
+            Imágenes detectadas ({selectedImages.size} de {detectedImages.length}{" "}
+            seleccionadas)
+          </label>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+            {detectedImages.map((url) => {
+              const isSelected = selectedImages.has(url);
+              return (
+                <label
+                  key={url}
+                  style={{
+                    position: "relative",
+                    cursor: "pointer",
+                    border: isSelected
+                      ? "2px solid #2563eb"
+                      : "2px solid transparent",
+                    borderRadius: 6,
+                    padding: 2,
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => toggleImage(url)}
+                    style={{ position: "absolute", top: 4, left: 4 }}
+                  />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={url}
+                    alt=""
+                    width={72}
+                    height={72}
+                    style={{ objectFit: "contain", display: "block" }}
+                  />
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="field">
         <label htmlFor="description">Descripción (opcional)</label>
