@@ -12,6 +12,8 @@ export interface ExtractedProductInfo {
 
 interface JsonLdOffer {
   price?: string | number;
+  lowPrice?: string | number;
+  highPrice?: string | number;
   priceCurrency?: string;
 }
 
@@ -94,6 +96,8 @@ export function parseProductHtml(html: string): ExtractedProductInfo {
 
   const price =
     toNumber(offer?.price) ??
+    toNumber(offer?.lowPrice) ??
+    toNumber(offer?.highPrice) ??
     toNumber(meta("product:price:amount") ?? undefined) ??
     toNumber(meta("og:price:amount") ?? undefined);
 

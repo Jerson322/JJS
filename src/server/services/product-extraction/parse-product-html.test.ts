@@ -55,6 +55,31 @@ describe("parseProductHtml", () => {
     expect(result.currency).toBe("USD");
   });
 
+  it("uses lowPrice from an AggregateOffer when there is no fixed price", () => {
+    const html = `
+      <html><head>
+        <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": "iPhone Pro",
+            "offers": [{
+              "@type": "AggregateOffer",
+              "lowPrice": 1099.00,
+              "highPrice": 1499.00,
+              "priceCurrency": "USD"
+            }]
+          }
+        </script>
+      </head><body></body></html>
+    `;
+
+    const result = parseProductHtml(html);
+
+    expect(result.price).toBe(1099);
+    expect(result.currency).toBe("USD");
+  });
+
   it("returns nulls when nothing usable is present", () => {
     const result = parseProductHtml("<html><head></head><body></body></html>");
 

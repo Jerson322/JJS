@@ -24,9 +24,11 @@ export function AddProductForm({ brandId, brandSlug }: AddProductFormProps) {
   const nameRef = useRef<HTMLInputElement>(null);
   const priceRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   const [isDetecting, startDetecting] = useTransition();
   const [detectError, setDetectError] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   function handleDetect() {
     const url = productUrlRef.current?.value.trim();
@@ -51,6 +53,10 @@ export function AddProductForm({ brandId, brandSlug }: AddProductFormProps) {
       }
       if (imageRef.current && result.data.image) {
         imageRef.current.value = result.data.image;
+        setPreviewImage(result.data.image);
+      }
+      if (descriptionRef.current && result.data.description) {
+        descriptionRef.current.value = result.data.description;
       }
     });
   }
@@ -101,12 +107,29 @@ export function AddProductForm({ brandId, brandSlug }: AddProductFormProps) {
 
       <div className="field">
         <label htmlFor="imageUrl">Imagen (URL, opcional)</label>
-        <input id="imageUrl" name="imageUrl" type="url" ref={imageRef} />
+        <input
+          id="imageUrl"
+          name="imageUrl"
+          type="url"
+          ref={imageRef}
+          onChange={(e) => setPreviewImage(e.target.value.trim() || null)}
+        />
+        {previewImage && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={previewImage}
+            alt="Vista previa"
+            width={80}
+            height={80}
+            style={{ objectFit: "contain", marginTop: "0.5rem" }}
+            onError={() => setPreviewImage(null)}
+          />
+        )}
       </div>
 
       <div className="field">
         <label htmlFor="description">Descripción (opcional)</label>
-        <textarea id="description" name="description" rows={2} />
+        <textarea id="description" name="description" rows={2} ref={descriptionRef} />
       </div>
 
       {state.error && <p className="error">{state.error}</p>}
