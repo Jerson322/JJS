@@ -3,6 +3,10 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/server/db/client";
 import styles from "./catalogo.module.css";
 
+// Sin llamadas a APIs dinamicas (cookies/headers), Next la trataria como
+// estatica y la congelaria con los productos de la primera visita.
+export const dynamic = "force-dynamic";
+
 export default async function CatalogoBrandPage(
   props: PageProps<"/catalogo/[slug]">,
 ) {
