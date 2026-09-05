@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/server/db/client";
-import { ProductImageCarousel } from "./ProductImageCarousel";
-import { ProductVariantCard } from "./ProductVariantCard";
 import styles from "./catalogo.module.css";
 
 // Sin llamadas a APIs dinamicas (cookies/headers), Next la trataria como
@@ -23,7 +21,7 @@ export default async function CatalogoBrandPage(
         include: {
           variants: {
             where: { isActive: true },
-            orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+            select: { imageUrl: true, price: true },
           },
         },
       },
@@ -39,7 +37,7 @@ export default async function CatalogoBrandPage(
       <div className={styles.header}>
         <Link href="/">← Volver</Link>
         <h1>{brand.name}</h1>
-        <p>Elige un producto para solicitar su importación.</p>
+        <p>Elige un producto para ver detalles y solicitar su importación.</p>
       </div>
 
       {brand.products.length === 0 ? (
@@ -54,25 +52,34 @@ export default async function CatalogoBrandPage(
         </p>
       ) : (
         <div className={styles.grid}>
-          {brand.products.map((product) =>
-            product.variants.length > 0 ? (
-              <ProductVariantCard
+          {brand.products.map((product) => {
+            const hasVariants = product.variants.length > 0;
+            const coverImage = hasVariants
+              ? product.variants.find((v) => v.imageUrl)?.imageUrl
+              : product.imageUrl;
+
+            const prices = hasVariants
+              ? product.variants
+                  .map((v) => (v.price != null ? Number(v.price) : null))
+                  .filter((p): p is number => p != null)
+              : product.price != null
+                ? [Number(product.price)]
+                : [];
+            const minPrice = prices.length > 0 ? Math.min(...prices) : null;
+
+            return (
+              <Link
                 key={product.id}
-                productName={product.name}
-                brandName={brand.name}
-                variants={product.variants.map((v) => ({
-                  id: v.id,
-                  capacity: v.capacity,
-                  color: v.color,
-                  price: v.price != null ? Number(v.price) : null,
-                  images: v.images,
-                  productUrl: v.productUrl,
-                }))}
-              />
-            ) : (
-              <div key={product.id} className={styles.productCard}>
-                {product.images.length > 0 ? (
-                  <ProductImageCarousel images={product.images} alt={product.name} />
+                href={`/catalogo/${brand.slug}/${product.id}`}
+                className={styles.referenceCard}
+              >
+                {coverImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={coverImage}
+                    alt={product.name}
+                    className={styles.productImage}
+                  />
                 ) : (
                   <div className={styles.productImagePlaceholder}>
                     {brand.name}
@@ -81,22 +88,14 @@ export default async function CatalogoBrandPage(
                 <strong className={styles.productName} title={product.name}>
                   {product.name}
                 </strong>
-                {product.price != null && (
+                {minPrice != null && (
                   <span className={styles.productPrice}>
-                    ${product.price.toString()}
+                    {hasVariants ? "Desde " : ""}${minPrice}
                   </span>
                 )}
-                <Link
-                  href={`/solicitar?prefill=${encodeURIComponent(
-                    product.productUrl || `${product.name} (${brand.name})`,
-                  )}`}
-                  className={`button ${styles.requestButton}`}
-                >
-                  Solicitar este producto
-                </Link>
-              </div>
-            ),
-          )}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

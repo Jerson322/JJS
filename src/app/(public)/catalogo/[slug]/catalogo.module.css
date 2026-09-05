@@ -11,15 +11,22 @@
   gap: 1.25rem;
 }
 
-.productCard {
+.referenceCard {
   border: 1px solid rgba(128, 128, 128, 0.25);
   border-radius: 10px;
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  height: 400px;
+  gap: 0.5rem;
+  height: 260px;
   overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.referenceCard:hover {
+  border-color: rgba(37, 99, 235, 0.5);
 }
 
 .productName {
@@ -124,26 +131,17 @@
 
 .variantOptions {
   display: flex;
-  flex-wrap: nowrap;
-  gap: 0.4rem;
-  overflow-x: auto;
-  overflow-y: hidden;
-  flex-shrink: 0;
-  padding-bottom: 2px;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .variantPill {
   border: 1px solid rgba(128, 128, 128, 0.35);
   background: transparent;
   border-radius: 999px;
-  padding: 0.2rem 0.65rem;
-  font-size: 0.8rem;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.85rem;
   cursor: pointer;
-  flex-shrink: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 160px;
 }
 
 .variantPillActive {
@@ -153,14 +151,13 @@
 }
 
 .colorSwatch {
-  width: 22px;
-  height: 22px;
-  min-width: 22px;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
   border-radius: 999px;
   border: 1px solid rgba(128, 128, 128, 0.35);
   cursor: pointer;
   padding: 0;
-  flex-shrink: 0;
 }
 
 .colorSwatchActive {
@@ -168,17 +165,69 @@
   outline-offset: 2px;
 }
 
-.variantLabel {
-  display: block;
-  font-size: 0.8rem;
-  color: #9ca3af;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex-shrink: 0;
+/* Pagina de detalle */
+
+.detailLayout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
 }
 
-.requestButton {
-  margin-top: auto;
-  flex-shrink: 0;
+.detailImageColumn {
+  flex: 1 1 360px;
+  max-width: 480px;
+}
+
+.detailCarouselImage {
+  height: 380px;
+}
+
+.detailImagePlaceholder {
+  width: 100%;
+  height: 380px;
+  border-radius: 10px;
+  background: rgba(128, 128, 128, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+}
+
+.detailInfoColumn {
+  flex: 1 1 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detailTitle {
+  margin: 0;
+}
+
+.detailPrice {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.detailDescription {
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.optionGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.optionLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.detailCta {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  padding: 0.75rem 2rem;
 }

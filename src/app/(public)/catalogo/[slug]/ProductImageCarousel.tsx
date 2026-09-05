@@ -6,9 +6,14 @@ import styles from "./catalogo.module.css";
 interface ProductImageCarouselProps {
   images: string[];
   alt: string;
+  imageClassName?: string;
 }
 
-export function ProductImageCarousel({ images, alt }: ProductImageCarouselProps) {
+export function ProductImageCarousel({
+  images,
+  alt,
+  imageClassName,
+}: ProductImageCarouselProps) {
   const [index, setIndex] = useState(0);
 
   if (images.length === 0) return null;
@@ -20,7 +25,11 @@ export function ProductImageCarousel({ images, alt }: ProductImageCarouselProps)
   return (
     <div className={styles.carousel}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={images[index]} alt={alt} className={styles.carouselImage} />
+      <img
+        src={images[index]}
+        alt={alt}
+        className={`${styles.carouselImage} ${imageClassName ?? ""}`}
+      />
 
       {images.length > 1 && (
         <>
