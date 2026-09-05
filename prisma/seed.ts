@@ -43,6 +43,28 @@ async function main() {
     },
   });
 
+  await prisma.shippingRateConfig.upsert({
+    where: { id: "seed-shipping-general" },
+    update: {},
+    create: {
+      id: "seed-shipping-general",
+      category: "general",
+      ratePerKg: 9,
+      minCharge: 6,
+    },
+  });
+
+  await prisma.shippingRateConfig.upsert({
+    where: { id: "seed-shipping-electronics" },
+    update: {},
+    create: {
+      id: "seed-shipping-electronics",
+      category: "electronics",
+      ratePerKg: 12,
+      minCharge: 8,
+    },
+  });
+
   const brands = [
     {
       slug: "amazon",

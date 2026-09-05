@@ -180,6 +180,7 @@ model CatalogProduct {
   imageUrl    String?
   images      String[]                @default([])
   price       Decimal?                @db.Decimal(10, 2)
+  weightGrams Int?
   productUrl  String?
   isActive    Boolean                 @default(true)
   variants    CatalogProductVariant[]
@@ -226,4 +227,18 @@ model DutyRateConfig {
 
   @@index([category, isActive])
   @@map("duty_rate_configs")
+}
+
+model ShippingRateConfig {
+  id            String    @id @default(cuid())
+  category      String
+  ratePerKg     Decimal   @db.Decimal(10, 2)
+  minCharge     Decimal?  @db.Decimal(10, 2)
+  effectiveFrom DateTime  @default(now())
+  effectiveTo   DateTime?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+
+  @@index([category, isActive])
+  @@map("shipping_rate_configs")
 }
