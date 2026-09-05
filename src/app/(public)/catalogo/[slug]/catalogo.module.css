@@ -108,3 +108,43 @@
 .carouselDotActive {
   background: #2563eb;
 }
+
+.variantOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.variantPill {
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  background: transparent;
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.variantPillActive {
+  border-color: #2563eb;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.colorSwatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  cursor: pointer;
+  padding: 0;
+}
+
+.colorSwatchActive {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.variantLabel {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}

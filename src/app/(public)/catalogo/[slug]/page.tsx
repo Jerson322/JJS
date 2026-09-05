@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/server/db/client";
 import { ProductImageCarousel } from "./ProductImageCarousel";
+import { ProductVariantCard } from "./ProductVariantCard";
 import styles from "./catalogo.module.css";
 
 // Sin llamadas a APIs dinamicas (cookies/headers), Next la trataria como
@@ -19,6 +20,12 @@ export default async function CatalogoBrandPage(
       products: {
         where: { isActive: true },
         orderBy: { createdAt: "desc" },
+        include: {
+          variants: {
+            where: { isActive: true },
+            orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+          },
+        },
       },
     },
   });
@@ -47,31 +54,47 @@ export default async function CatalogoBrandPage(
         </p>
       ) : (
         <div className={styles.grid}>
-          {brand.products.map((product) => (
-            <div key={product.id} className={styles.productCard}>
-              {product.images.length > 0 ? (
-                <ProductImageCarousel images={product.images} alt={product.name} />
-              ) : (
-                <div className={styles.productImagePlaceholder}>
-                  {brand.name}
-                </div>
-              )}
-              <strong>{product.name}</strong>
-              {product.price != null && (
-                <span className={styles.productPrice}>
-                  ${product.price.toString()}
-                </span>
-              )}
-              <Link
-                href={`/solicitar?prefill=${encodeURIComponent(
-                  product.productUrl || `${product.name} (${brand.name})`,
-                )}`}
-                className="button"
-              >
-                Solicitar este producto
-              </Link>
-            </div>
-          ))}
+          {brand.products.map((product) =>
+            product.variants.length > 0 ? (
+              <ProductVariantCard
+                key={product.id}
+                productName={product.name}
+                brandName={brand.name}
+                variants={product.variants.map((v) => ({
+                  id: v.id,
+                  capacity: v.capacity,
+                  color: v.color,
+                  price: v.price != null ? Number(v.price) : null,
+                  images: v.images,
+                  productUrl: v.productUrl,
+                }))}
+              />
+            ) : (
+              <div key={product.id} className={styles.productCard}>
+                {product.images.length > 0 ? (
+                  <ProductImageCarousel images={product.images} alt={product.name} />
+                ) : (
+                  <div className={styles.productImagePlaceholder}>
+                    {brand.name}
+                  </div>
+                )}
+                <strong>{product.name}</strong>
+                {product.price != null && (
+                  <span className={styles.productPrice}>
+                    ${product.price.toString()}
+                  </span>
+                )}
+                <Link
+                  href={`/solicitar?prefill=${encodeURIComponent(
+                    product.productUrl || `${product.name} (${brand.name})`,
+                  )}`}
+                  className="button"
+                >
+                  Solicitar este producto
+                </Link>
+              </div>
+            ),
+          )}
         </div>
       )}
     </div>

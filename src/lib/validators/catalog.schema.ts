@@ -13,3 +13,17 @@ export const createCatalogProductSchema = z.object({
 export type CreateCatalogProductInput = z.infer<
   typeof createCatalogProductSchema
 >;
+
+export const createCatalogVariantSchema = z.object({
+  productId: z.string().min(1),
+  color: z.string().optional(),
+  capacity: z.string().optional(),
+  imageUrl: z.string().url().optional().or(z.literal("")),
+  images: z.array(z.string().url()).default([]),
+  price: z.coerce.number().positive().optional(),
+  productUrl: z.string().url().optional().or(z.literal("")),
+});
+
+export type CreateCatalogVariantInput = z.infer<
+  typeof createCatalogVariantSchema
+>;

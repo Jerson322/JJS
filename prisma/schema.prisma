@@ -172,21 +172,45 @@ model Brand {
 }
 
 model CatalogProduct {
-  id          String   @id @default(cuid())
+  id          String                  @id @default(cuid())
   brandId     String
-  brand       Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brand       Brand                   @relation(fields: [brandId], references: [id], onDelete: Cascade)
   name        String
   description String?
   imageUrl    String?
-  images      String[] @default([])
-  price       Decimal? @db.Decimal(10, 2)
+  images      String[]                @default([])
+  price       Decimal?                @db.Decimal(10, 2)
   productUrl  String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isActive    Boolean                 @default(true)
+  variants    CatalogProductVariant[]
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
 
   @@index([brandId, isActive])
   @@map("catalog_products")
+}
+
+// A variant (e.g. one color + storage combo) of a CatalogProduct. When a
+// product has variants, the public catalog lets the customer pick one and
+// swaps price/images accordingly instead of showing the product's own
+// price/imageUrl, which stay as the fallback for variant-less products.
+model CatalogProductVariant {
+  id         String         @id @default(cuid())
+  productId  String
+  product    CatalogProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  color      String?
+  capacity   String?
+  imageUrl   String?
+  images     String[]       @default([])
+  price      Decimal?       @db.Decimal(10, 2)
+  productUrl String?
+  isActive   Boolean        @default(true)
+  sortOrder  Int            @default(0)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@index([productId, isActive])
+  @@map("catalog_product_variants")
 }
 
 model DutyRateConfig {
