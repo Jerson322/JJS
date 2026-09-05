@@ -106,6 +106,26 @@ describe("parseProductHtml", () => {
     expect(result.image).toBe("https://example.com/1.jpg");
   });
 
+  it("treats the same photo at different CDN sizes as one image", () => {
+    const html = `
+      <html><head>
+        <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": "Telefono",
+            "image": "https://cdn.example.com/photo.jpg?wid=5120&hei=2880"
+          }
+        </script>
+        <meta property="og:image" content="https://cdn.example.com/photo.jpg?wid=1200&hei=630" />
+      </head><body></body></html>
+    `;
+
+    const result = parseProductHtml(html);
+
+    expect(result.images).toEqual(["https://cdn.example.com/photo.jpg?wid=5120&hei=2880"]);
+  });
+
   it("returns nulls when nothing usable is present", () => {
     const result = parseProductHtml("<html><head></head><body></body></html>");
 

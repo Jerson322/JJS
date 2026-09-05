@@ -29,8 +29,10 @@ export function AddProductForm({ brandId, brandSlug }: AddProductFormProps) {
   const [isDetecting, startDetecting] = useTransition();
   const [detectError, setDetectError] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [detectedImages, setDetectedImages] = useState<string[]>([]);
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
+  const [manualImageUrl, setManualImageUrl] = useState("");
+  const [manualImageError, setManualImageError] = useState<string | null>(null);
 
   function toggleImage(url: string) {
     setSelectedImages((prev) => {
@@ -42,6 +44,22 @@ export function AddProductForm({ brandId, brandSlug }: AddProductFormProps) {
       }
       return next;
     });
+  }
+
+  function addManualImage() {
+    const url = manualImageUrl.trim();
+    if (!url) return;
+    try {
+      new URL(url);
+    } catch {
+      setManualImageError("Pega una URL de imagen válida.");
+      return;
+    }
+    setManualImageError(null);
+    setManualImageUrl("");
+    setGalleryImages((prev) => (prev.includes(url) ? prev : [...prev, url]));
+    setSelectedImages((prev) => new Set(prev).add(url));
+    if (!previewImage) setPreviewImage(url);
   }
 
   function handleDetect() {
@@ -70,7 +88,7 @@ export function AddProductForm({ brandId, brandSlug }: AddProductFormProps) {
       }
 
       const images = result.data.images ?? [];
-      setDetectedImages(images);
+      setGalleryImages(images);
       setSelectedImages(new Set(images));
 
       const cover = images[0] ?? result.data.image;
@@ -150,14 +168,38 @@ export function AddProductForm({ brandId, brandSlug }: AddProductFormProps) {
         )}
       </div>
 
-      {detectedImages.length > 1 && (
+      <div className="field">
+        <label htmlFor="manualImageUrl">
+          Agregar otra foto a mano (URL de imagen)
+        </label>
+        <p style={{ fontSize: "0.85rem", opacity: 0.75, margin: "0 0 0.4rem" }}>
+          Útil cuando la tienda carga su galería con JavaScript y solo
+          detectamos una foto: click derecho → &quot;Copiar dirección de la
+          imagen&quot; en cada foto del sitio y pégala aquí.
+        </p>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <input
+            id="manualImageUrl"
+            type="url"
+            value={manualImageUrl}
+            onChange={(e) => setManualImageUrl(e.target.value)}
+            style={{ flex: 1 }}
+          />
+          <button type="button" className="button" onClick={addManualImage}>
+            Agregar foto
+          </button>
+        </div>
+        {manualImageError && <p className="error">{manualImageError}</p>}
+      </div>
+
+      {galleryImages.length > 0 && (
         <div className="field">
           <label>
-            Imágenes detectadas ({selectedImages.size} de {detectedImages.length}{" "}
+            Fotos del producto ({selectedImages.size} de {galleryImages.length}{" "}
             seleccionadas)
           </label>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-            {detectedImages.map((url) => {
+            {galleryImages.map((url) => {
               const isSelected = selectedImages.has(url);
               return (
                 <label

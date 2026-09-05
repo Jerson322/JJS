@@ -45,6 +45,26 @@ function toArray<T>(value: T | T[] | undefined): T[] {
 
 const MAX_IMAGES = 12;
 
+// CDNs (Shopify, Apple, imgix, Cloudinary...) resize the same photo through
+// query params, so two URLs that only differ there are the same picture.
+function dedupeImages(urls: string[]): string[] {
+  const seenKeys = new Set<string>();
+  const result: string[] = [];
+  for (const url of urls) {
+    let key = url;
+    try {
+      const parsed = new URL(url);
+      key = parsed.origin + parsed.pathname;
+    } catch {
+      // Keep the raw URL as the key if it fails to parse.
+    }
+    if (seenKeys.has(key)) continue;
+    seenKeys.add(key);
+    result.push(url);
+  }
+  return result;
+}
+
 function findProductNode(node: unknown): JsonLdProduct | null {
   if (Array.isArray(node)) {
     for (const item of node) {
@@ -104,11 +124,9 @@ export function parseProductHtml(html: string): ExtractedProductInfo {
     .toArray()
     .filter((src): src is string => Boolean(src));
 
-  const images = Array.from(
-    new Set(
-      [...toArray(jsonLdProduct?.image), ...ogImages].filter((src) =>
-        /^https?:\/\//.test(src),
-      ),
+  const images = dedupeImages(
+    [...toArray(jsonLdProduct?.image), ...ogImages].filter((src) =>
+      /^https?:\/\//.test(src),
     ),
   ).slice(0, MAX_IMAGES);
 
