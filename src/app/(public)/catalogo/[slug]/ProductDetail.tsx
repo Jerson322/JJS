@@ -49,6 +49,7 @@ const COLOR_SWATCHES: Record<string, string> = {
   green: "#5a7d5a",
   purple: "#7a5fa0",
   yellow: "#e0c341",
+  natural: "#c9b79c",
 };
 
 function swatchColor(color: string | null): string {
