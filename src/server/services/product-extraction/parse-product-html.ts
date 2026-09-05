@@ -12,6 +12,7 @@ export interface ExtractedProductInfo {
 }
 
 interface JsonLdOffer {
+  "@type"?: string;
   price?: string | number;
   lowPrice?: string | number;
   highPrice?: string | number;
@@ -65,24 +66,28 @@ function dedupeImages(urls: string[]): string[] {
   return result;
 }
 
-function findProductNode(node: unknown): JsonLdProduct | null {
+function findAllProductNodes(node: unknown): JsonLdProduct[] {
   if (Array.isArray(node)) {
-    for (const item of node) {
-      const found = findProductNode(item);
-      if (found) return found;
-    }
-    return null;
+    return node.flatMap(findAllProductNodes);
   }
 
   if (node && typeof node === "object") {
     const obj = node as JsonLdProduct & { "@graph"?: unknown[] };
     const type = obj["@type"];
     const isProduct = type === "Product" || (Array.isArray(type) && type.includes("Product"));
-    if (isProduct) return obj;
-    if (obj["@graph"]) return findProductNode(obj["@graph"]);
+    if (isProduct) return [obj];
+    if (obj["@graph"]) return findAllProductNodes(obj["@graph"]);
   }
 
-  return null;
+  return [];
+}
+
+// A page comparing several models (e.g. "you might also like iPhone 16
+// Plus") can embed more than one Product block. One with a fixed Offer is
+// the actual configured SKU; an AggregateOffer-only block is usually a
+// price-range summary for a whole product line, not this exact item.
+function hasFixedOffer(product: JsonLdProduct): boolean {
+  return toArray(product.offers).some((offer) => offer["@type"] !== "AggregateOffer");
 }
 
 export function parseProductHtml(html: string): ExtractedProductInfo {
@@ -93,18 +98,18 @@ export function parseProductHtml(html: string): ExtractedProductInfo {
     $(`meta[name="${name}"]`).attr("content") ??
     null;
 
-  let jsonLdProduct: JsonLdProduct | null = null;
+  const productNodes: JsonLdProduct[] = [];
   const scripts = $('script[type="application/ld+json"]').toArray();
   for (const el of scripts) {
-    if (jsonLdProduct) break;
     try {
       const parsed: unknown = JSON.parse($(el).text());
-      const found = findProductNode(parsed);
-      if (found) jsonLdProduct = found;
+      productNodes.push(...findAllProductNodes(parsed));
     } catch {
       // Ignore malformed JSON-LD blocks; fall back to meta tags.
     }
   }
+  const jsonLdProduct =
+    productNodes.find(hasFixedOffer) ?? productNodes[0] ?? null;
 
   const offer = firstOf(jsonLdProduct?.offers);
   const brand = jsonLdProduct?.brand;

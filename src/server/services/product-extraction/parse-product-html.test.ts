@@ -126,6 +126,42 @@ describe("parseProductHtml", () => {
     expect(result.images).toEqual(["https://cdn.example.com/photo.jpg?wid=5120&hei=2880"]);
   });
 
+  it("prefers a fixed-price Offer over a family AggregateOffer on the same page", () => {
+    const html = `
+      <html><head>
+        <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": "Telefono X",
+            "offers": [{ "@type": "AggregateOffer", "lowPrice": 699, "highPrice": 929, "priceCurrency": "USD" }]
+          }
+        </script>
+        <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": "Telefono X Plus",
+            "offers": [{ "@type": "AggregateOffer", "lowPrice": 799, "highPrice": 999, "priceCurrency": "USD" }]
+          }
+        </script>
+        <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": "Telefono X Plus 256GB Negro",
+            "offers": [{ "@type": "Offer", "price": 929, "priceCurrency": "USD" }]
+          }
+        </script>
+      </head><body></body></html>
+    `;
+
+    const result = parseProductHtml(html);
+
+    expect(result.title).toBe("Telefono X Plus 256GB Negro");
+    expect(result.price).toBe(929);
+  });
+
   it("returns nulls when nothing usable is present", () => {
     const result = parseProductHtml("<html><head></head><body></body></html>");
 
