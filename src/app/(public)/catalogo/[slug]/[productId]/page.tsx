@@ -49,8 +49,12 @@ export default async function ProductDetailPage(
 
   return (
     <div className="container stack">
-      <div className={styles.header}>
-        <Link href={`/catalogo/${brand.slug}`}>← Volver a {brand.name}</Link>
+      <div className={styles.breadcrumb}>
+        <Link href="/">Inicio</Link>
+        <span>/</span>
+        <Link href={`/catalogo/${brand.slug}`}>{brand.name}</Link>
+        <span>/</span>
+        <span>{product.name}</span>
       </div>
 
       <ProductDetail

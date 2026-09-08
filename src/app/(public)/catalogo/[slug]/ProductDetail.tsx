@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ProductImageCarousel } from "./ProductImageCarousel";
 import styles from "./catalogo.module.css";
 
 export interface VariantInfo {
@@ -76,95 +75,130 @@ export function ProductDetail({
   ).sort((a, b) => capacityRank(a) - capacityRank(b));
 
   const [selectedId, setSelectedId] = useState(variants[0]?.id);
+  const [imageIndex, setImageIndex] = useState(0);
   const current = variants.find((v) => v.id === selectedId) ?? variants[0];
 
   const colorsForCapacity = variants.filter((v) => v.capacity === current?.capacity);
+
+  function selectVariant(id: string) {
+    setSelectedId(id);
+    setImageIndex(0);
+  }
 
   function pickCapacity(capacity: string) {
     const match =
       variants.find((v) => v.capacity === capacity && v.color === current?.color) ??
       variants.find((v) => v.capacity === capacity);
-    if (match) setSelectedId(match.id);
+    if (match) selectVariant(match.id);
   }
 
   if (!current) return null;
 
+  const images = current.images;
+  const mainImage = images[imageIndex] ?? images[0];
+
   return (
     <div className={styles.detailLayout}>
       <div className={styles.detailImageColumn}>
-        {current.images.length > 0 ? (
-          <ProductImageCarousel
-            images={current.images}
+        {mainImage ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={mainImage}
             alt={productName}
-            imageClassName={styles.detailCarouselImage}
+            className={styles.detailCarouselImage}
           />
         ) : (
           <div className={styles.detailImagePlaceholder}>{brandName}</div>
         )}
+
+        {images.length > 1 && (
+          <div className={styles.thumbRow}>
+            {images.map((url, i) => (
+              <button
+                key={url}
+                type="button"
+                aria-label={`Ver imagen ${i + 1}`}
+                className={`${styles.thumbButton} ${
+                  i === imageIndex ? styles.thumbButtonActive : ""
+                }`}
+                onClick={() => setImageIndex(i)}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt="" />
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className={styles.detailInfoColumn}>
-        <h1 className={styles.detailTitle}>{productName}</h1>
+        <div className={styles.buyBox}>
+          <span className={styles.detailBrand}>{brandName}</span>
+          <h1 className={styles.detailTitle}>{productName}</h1>
 
-        {current.price != null && (
-          <span className={styles.detailPrice}>${current.price}</span>
-        )}
+          {current.price != null && (
+            <span className={styles.detailPrice}>${current.price}</span>
+          )}
 
-        {description && <p className={styles.detailDescription}>{description}</p>}
+          {description && <p className={styles.detailDescription}>{description}</p>}
 
-        {capacities.length > 1 && (
-          <div className={styles.optionGroup}>
-            <span className={styles.optionLabel}>Capacidad</span>
-            <div className={styles.variantOptions}>
-              {capacities.map((capacity) => (
-                <button
-                  key={capacity}
-                  type="button"
-                  title={capacity}
-                  className={`${styles.variantPill} ${
-                    current.capacity === capacity ? styles.variantPillActive : ""
-                  }`}
-                  onClick={() => pickCapacity(capacity)}
-                >
-                  {capacity}
-                </button>
-              ))}
+          {capacities.length > 1 && (
+            <div className={styles.optionGroup}>
+              <span className={styles.optionLabel}>Capacidad</span>
+              <div className={styles.variantOptions}>
+                {capacities.map((capacity) => (
+                  <button
+                    key={capacity}
+                    type="button"
+                    title={capacity}
+                    className={`${styles.variantPill} ${
+                      current.capacity === capacity ? styles.variantPillActive : ""
+                    }`}
+                    onClick={() => pickCapacity(capacity)}
+                  >
+                    {capacity}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {colorsForCapacity.length > 1 && (
-          <div className={styles.optionGroup}>
-            <span className={styles.optionLabel}>
-              Color{current.color ? `: ${current.color}` : ""}
-            </span>
-            <div className={styles.variantOptions}>
-              {colorsForCapacity.map((variant) => (
-                <button
-                  key={variant.id}
-                  type="button"
-                  title={variant.color ?? undefined}
-                  aria-label={variant.color ?? "Color"}
-                  onClick={() => setSelectedId(variant.id)}
-                  className={`${styles.colorSwatch} ${
-                    variant.id === current.id ? styles.colorSwatchActive : ""
-                  }`}
-                  style={{ background: swatchColor(variant.color) }}
-                />
-              ))}
+          {colorsForCapacity.length > 1 && (
+            <div className={styles.optionGroup}>
+              <span className={styles.optionLabel}>
+                Color{current.color ? `: ${current.color}` : ""}
+              </span>
+              <div className={styles.variantOptions}>
+                {colorsForCapacity.map((variant) => (
+                  <button
+                    key={variant.id}
+                    type="button"
+                    title={variant.color ?? undefined}
+                    aria-label={variant.color ?? "Color"}
+                    onClick={() => selectVariant(variant.id)}
+                    className={`${styles.colorSwatch} ${
+                      variant.id === current.id ? styles.colorSwatchActive : ""
+                    }`}
+                    style={{ background: swatchColor(variant.color) }}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <Link
-          href={`/solicitar?prefill=${encodeURIComponent(
-            current.productUrl ||
-              `${productName} ${[current.capacity, current.color].filter(Boolean).join(" ")} (${brandName})`,
-          )}`}
-          className={`button ${styles.detailCta}`}
-        >
-          Solicitar este producto
-        </Link>
+          <Link
+            href={`/solicitar?prefill=${encodeURIComponent(
+              current.productUrl ||
+                `${productName} ${[current.capacity, current.color].filter(Boolean).join(" ")} (${brandName})`,
+            )}`}
+            className={`button ${styles.detailCta}`}
+          >
+            Solicitar este producto
+          </Link>
+          <p className={styles.detailFinePrint}>
+            Te cotizamos el envío y la aduana antes de cobrarte.
+          </p>
+        </div>
       </div>
     </div>
   );
