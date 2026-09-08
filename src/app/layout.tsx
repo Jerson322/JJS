@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import { Footer } from "@/components/Footer";
+import { ScrollNav } from "@/components/ScrollNav";
 import { auth, signOut } from "@/server/auth/auth.config";
 import "./globals.css";
 
@@ -26,7 +27,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
-        <nav className="nav">
+        <ScrollNav>
           <Link href="/">Tienda Importación</Link>
           <div className="links">
             <Link href="/solicitar">Solicitar</Link>
@@ -59,7 +60,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               </>
             )}
           </div>
-        </nav>
+        </ScrollNav>
         <main>{children}</main>
         <Footer />
       </body>
