@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { STATUS_LABELS } from "@/lib/status-labels";
+import { statusBadgeClass } from "@/lib/status-colors";
 import { requireUser } from "@/server/auth/rbac";
 import { prisma } from "@/server/db/client";
 
@@ -25,7 +26,9 @@ export default async function SolicitudDetailPage(
   return (
     <div className="container stack">
       <h1>{request.description}</h1>
-      <span className="badge">{STATUS_LABELS[request.status]}</span>
+      <span className={statusBadgeClass(request.status)}>
+        {STATUS_LABELS[request.status]}
+      </span>
 
       <div className="card stack">
         <h2>Detalle</h2>
@@ -80,9 +83,18 @@ export default async function SolicitudDetailPage(
         <h2>Seguimiento</h2>
         <ul className="stack">
           {request.events.map((event) => (
-            <li key={event.id}>
-              <strong>{STATUS_LABELS[event.toStatus]}</strong> —{" "}
-              {event.createdAt.toLocaleString("es-PA")}
+            <li
+              key={event.id}
+              style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                <span className={statusBadgeClass(event.toStatus)}>
+                  {STATUS_LABELS[event.toStatus]}
+                </span>
+                <span style={{ fontSize: "0.8rem", color: "var(--muted)" }}>
+                  {event.createdAt.toLocaleString("es-PA")}
+                </span>
+              </div>
               {event.note && <div>{event.note}</div>}
             </li>
           ))}

@@ -8,6 +8,7 @@ import {
 } from "@/server/actions/purchase-request.actions";
 import { extractProductInfoAction } from "@/server/actions/product-extraction.actions";
 import type { ExtractedProductInfo } from "@/server/services/product-extraction/extract-product-info";
+import styles from "./solicitar.module.css";
 
 const initialState: SubmitPurchaseRequestState = {};
 
@@ -113,17 +114,17 @@ export function SolicitarForm({ prefill, isAuthenticated }: SolicitarFormProps) 
   return (
     <form ref={formRef} action={formAction} onSubmit={handleSubmit} className="stack">
       {!isAuthenticated && (
-        <p style={{ color: "#6b7280" }}>
+        <p className={styles.hint}>
           Puedes llenar todo esto sin cuenta. Solo te pediremos crear una al
           final, para que puedas darle seguimiento a tu pedido.
         </p>
       )}
-      <fieldset className="stack">
+      <fieldset className={styles.fieldset}>
         <legend>¿Qué quieres importar?</legend>
 
         <div className="field">
           <label htmlFor="productUrl">Link del producto (opcional)</label>
-          <div style={{ display: "flex", gap: "0.5rem" }}>
+          <div className={styles.urlRow}>
             <input
               id="productUrl"
               name="productUrl"
@@ -131,7 +132,7 @@ export function SolicitarForm({ prefill, isAuthenticated }: SolicitarFormProps) 
               placeholder="https://www.nike.com/... o https://www.apple.com/..."
               ref={productUrlRef}
               defaultValue={prefillIsUrl ? prefill : undefined}
-              style={{ flex: 1 }}
+              className={styles.urlInput}
             />
             <button
               type="button"
@@ -144,7 +145,7 @@ export function SolicitarForm({ prefill, isAuthenticated }: SolicitarFormProps) 
           </div>
           {detectError && <p className="error">{detectError}</p>}
           {preview && (
-            <div className="card stack" style={{ flexDirection: "row", alignItems: "center", gap: "1rem" }}>
+            <div className={`card ${styles.preview}`}>
               {preview.image && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -152,7 +153,7 @@ export function SolicitarForm({ prefill, isAuthenticated }: SolicitarFormProps) 
                   alt=""
                   width={64}
                   height={64}
-                  style={{ objectFit: "contain" }}
+                  className={styles.previewImage}
                 />
               )}
               <div>
@@ -212,7 +213,7 @@ export function SolicitarForm({ prefill, isAuthenticated }: SolicitarFormProps) 
         </div>
       </fieldset>
 
-      <fieldset className="stack">
+      <fieldset className={styles.fieldset}>
         <legend>¿Dónde te lo entregamos?</legend>
 
         <div className="field">

@@ -45,7 +45,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                     await signOut({ redirectTo: "/" });
                   }}
                 >
-                  <button className="button" type="submit">
+                  <button className="button secondary" type="submit">
                     Salir
                   </button>
                 </form>
@@ -53,7 +53,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             ) : (
               <>
                 <Link href="/login">Iniciar sesión</Link>
-                <Link href="/registro">Crear cuenta</Link>
+                <Link href="/registro" className="button">
+                  Crear cuenta
+                </Link>
               </>
             )}
           </div>

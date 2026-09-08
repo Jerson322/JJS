@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { STATUS_LABELS } from "@/lib/status-labels";
+import { statusBadgeClass } from "@/lib/status-colors";
 import { requireUser } from "@/server/auth/rbac";
 import { prisma } from "@/server/db/client";
 
@@ -27,9 +28,18 @@ export default async function SolicitudesPage() {
               href={`/dashboard/solicitudes/${request.id}`}
               className="card"
             >
-              <div className="stack">
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: "1rem",
+                }}
+              >
                 <strong>{request.description}</strong>
-                <span className="badge">{STATUS_LABELS[request.status]}</span>
+                <span className={statusBadgeClass(request.status)}>
+                  {STATUS_LABELS[request.status]}
+                </span>
               </div>
             </Link>
           ))}
