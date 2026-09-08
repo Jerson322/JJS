@@ -166,7 +166,7 @@ export function AddVariantForm({ productId, brandSlug }: AddVariantFormProps) {
                     style={{
                       position: "relative",
                       cursor: "pointer",
-                      border: isSelected ? "2px solid #2563eb" : "2px solid transparent",
+                      border: isSelected ? "2px solid var(--accent)" : "2px solid transparent",
                       borderRadius: 6,
                       padding: 2,
                     }}
