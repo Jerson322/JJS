@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/server/db/client";
+import { Reveal } from "@/components/Reveal";
 import styles from "./home.module.css";
 
 const BRAND_COLORS: Record<string, string> = {
@@ -41,36 +42,37 @@ export async function CategoryGrid() {
 
   return (
     <section className={styles.categorySection}>
-      <div className={styles.categoryIntro}>
+      <Reveal className={styles.categoryIntro}>
         <h2 className={styles.sectionTitle}>Compra tus marcas favoritas</h2>
         <p>Elige una marca y arma tu pedido con nuestra ayuda.</p>
-      </div>
+      </Reveal>
       <div className={styles.categoryGrid}>
-        {brands.map((brand) => {
+        {brands.map((brand, index) => {
           const product = brand.products[0];
           const image = product?.variants[0]?.imageUrl ?? product?.imageUrl ?? null;
 
           return (
-            <Link
-              key={brand.id}
-              href={`/catalogo/${brand.slug}`}
-              className={styles.categoryTile}
-              style={{ background: BRAND_COLORS[brand.slug] ?? "#374151" }}
-            >
-              {image && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={image} alt="" className={styles.categoryImage} />
-              )}
-              <div className={styles.categoryOverlay} />
-              <div className={styles.categoryLabel}>
-                <strong>{brand.name}</strong>
-                <span>
-                  {brand._count.products > 0
-                    ? "Ver catálogo →"
-                    : "Solicitar producto →"}
-                </span>
-              </div>
-            </Link>
+            <Reveal key={brand.id} delay={index * 0.07}>
+              <Link
+                href={`/catalogo/${brand.slug}`}
+                className={styles.categoryTile}
+                style={{ background: BRAND_COLORS[brand.slug] ?? "#374151" }}
+              >
+                {image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={image} alt="" className={styles.categoryImage} />
+                )}
+                <div className={styles.categoryOverlay} />
+                <div className={styles.categoryLabel}>
+                  <strong>{brand.name}</strong>
+                  <span>
+                    {brand._count.products > 0
+                      ? "Ver catálogo →"
+                      : "Solicitar producto →"}
+                  </span>
+                </div>
+              </Link>
+            </Reveal>
           );
         })}
       </div>

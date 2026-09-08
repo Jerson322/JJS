@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/Reveal";
 import styles from "./home.module.css";
 
 const ITEMS = [
@@ -52,20 +53,22 @@ export function Beneficios() {
   return (
     <section id="beneficios" className={styles.benefitsSection}>
       <div className={styles.benefitsGrid}>
-        {ITEMS.map((item) => (
-          <div key={item.title} className={styles.benefitCard}>
-            <svg
-              width="30"
-              height="30"
-              viewBox="0 0 24 24"
-              className={styles.benefitIcon}
-              aria-hidden="true"
-            >
-              {item.icon}
-            </svg>
-            <h3>{item.title}</h3>
-            <p>{item.description}</p>
-          </div>
+        {ITEMS.map((item, index) => (
+          <Reveal key={item.title} delay={index * 0.1}>
+            <div className={styles.benefitCard}>
+              <svg
+                width="30"
+                height="30"
+                viewBox="0 0 24 24"
+                className={styles.benefitIcon}
+                aria-hidden="true"
+              >
+                {item.icon}
+              </svg>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </div>
+          </Reveal>
         ))}
       </div>
     </section>

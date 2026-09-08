@@ -9,26 +9,81 @@
   text-align: center;
   position: relative;
   overflow: hidden;
-  background: radial-gradient(
-      circle at 15% 15%,
-      rgba(0, 113, 227, 0.16),
-      transparent 45%
-    ),
-    radial-gradient(circle at 85% 25%, rgba(124, 58, 237, 0.14), transparent 45%),
-    radial-gradient(circle at 50% 100%, rgba(6, 182, 212, 0.1), transparent 55%),
-    var(--background);
+  background: var(--background);
+}
+
+.heroIntro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.heroBackground {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.heroBlobBlue,
+.heroBlobPurple,
+.heroBlobCyan {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  display: block;
+}
+
+.heroBlobBlue {
+  width: 42vw;
+  height: 42vw;
+  max-width: 560px;
+  max-height: 560px;
+  top: -10%;
+  left: -8%;
+  background: rgba(0, 113, 227, 0.22);
+}
+
+.heroBlobPurple {
+  width: 36vw;
+  height: 36vw;
+  max-width: 480px;
+  max-height: 480px;
+  top: 5%;
+  right: -10%;
+  background: rgba(124, 58, 237, 0.18);
+}
+
+.heroBlobCyan {
+  width: 40vw;
+  height: 40vw;
+  max-width: 520px;
+  max-height: 520px;
+  bottom: -20%;
+  left: 30%;
+  background: rgba(6, 182, 212, 0.14);
 }
 
 @media (prefers-color-scheme: dark) {
-  .hero {
-    background: radial-gradient(
-        circle at 15% 15%,
-        rgba(41, 151, 255, 0.22),
-        transparent 45%
-      ),
-      radial-gradient(circle at 85% 25%, rgba(124, 58, 237, 0.2), transparent 45%),
-      radial-gradient(circle at 50% 100%, rgba(6, 182, 212, 0.14), transparent 55%),
-      var(--background);
+  .heroBlobBlue {
+    background: rgba(41, 151, 255, 0.3);
+  }
+  .heroBlobPurple {
+    background: rgba(124, 58, 237, 0.26);
+  }
+  .heroBlobCyan {
+    background: rgba(6, 182, 212, 0.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroBlobBlue,
+  .heroBlobPurple,
+  .heroBlobCyan {
+    animation: none !important;
   }
 }
 
@@ -172,6 +227,8 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.6rem;
+  position: relative;
+  z-index: 1;
 }
 
 .quickLink {
@@ -291,9 +348,12 @@
   max-width: 1120px;
 }
 
-.featuredCard {
+.featuredRevealItem {
   flex: 0 0 auto;
   scroll-snap-align: start;
+}
+
+.featuredCard {
   width: 240px;
   border-radius: var(--radius-lg);
   background: var(--background);

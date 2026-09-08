@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/server/db/client";
+import { Reveal } from "@/components/Reveal";
 import styles from "./catalogo.module.css";
 
 // Sin llamadas a APIs dinamicas (cookies/headers), Next la trataria como
@@ -57,7 +58,7 @@ export default async function CatalogoBrandPage(
           </p>
         ) : (
           <div className={styles.grid}>
-            {brand.products.map((product) => {
+            {brand.products.map((product, index) => {
               const hasVariants = product.variants.length > 0;
               const coverImage = hasVariants
                 ? product.variants.find((v) => v.imageUrl)?.imageUrl
@@ -73,35 +74,36 @@ export default async function CatalogoBrandPage(
               const minPrice = prices.length > 0 ? Math.min(...prices) : null;
 
               return (
-                <Link
-                  key={product.id}
-                  href={`/catalogo/${brand.slug}/${product.id}`}
-                  className={styles.referenceCard}
-                >
-                  {coverImage ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={coverImage}
-                      alt={product.name}
-                      className={styles.productImage}
-                    />
-                  ) : (
-                    <div className={styles.productImagePlaceholder}>
-                      {brand.name}
-                    </div>
-                  )}
-                  <div className={styles.referenceInfo}>
-                    <strong className={styles.productName} title={product.name}>
-                      {product.name}
-                    </strong>
-                    {minPrice != null && (
-                      <span className={styles.productPrice}>
-                        {hasVariants ? "Desde " : ""}${minPrice}
-                      </span>
+                <Reveal key={product.id} delay={(index % 6) * 0.06}>
+                  <Link
+                    href={`/catalogo/${brand.slug}/${product.id}`}
+                    className={styles.referenceCard}
+                  >
+                    {coverImage ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={coverImage}
+                        alt={product.name}
+                        className={styles.productImage}
+                      />
+                    ) : (
+                      <div className={styles.productImagePlaceholder}>
+                        {brand.name}
+                      </div>
                     )}
-                    <span className={styles.referenceCta}>Ver detalles →</span>
-                  </div>
-                </Link>
+                    <div className={styles.referenceInfo}>
+                      <strong className={styles.productName} title={product.name}>
+                        {product.name}
+                      </strong>
+                      {minPrice != null && (
+                        <span className={styles.productPrice}>
+                          {hasVariants ? "Desde " : ""}${minPrice}
+                        </span>
+                      )}
+                      <span className={styles.referenceCta}>Ver detalles →</span>
+                    </div>
+                  </Link>
+                </Reveal>
               );
             })}
           </div>

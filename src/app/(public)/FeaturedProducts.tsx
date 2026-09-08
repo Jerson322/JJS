@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/server/db/client";
+import { Reveal } from "@/components/Reveal";
 import styles from "./home.module.css";
 
 const CURATED_NAMES = [
@@ -33,12 +34,12 @@ export async function FeaturedProducts() {
 
   return (
     <section className={styles.featuredSection}>
-      <div className={styles.categoryIntro}>
+      <Reveal className={styles.categoryIntro}>
         <h2 className={styles.sectionTitle}>Lo más pedido ahora</h2>
         <p>Precios y disponibilidad directo de la tienda oficial.</p>
-      </div>
+      </Reveal>
       <div className={styles.featuredTrack}>
-        {ordered.map((product) => {
+        {ordered.map((product, index) => {
           const hasVariants = product.variants.length > 0;
           const cover = hasVariants
             ? product.variants.find((v) => v.imageUrl)?.imageUrl
@@ -53,27 +54,32 @@ export async function FeaturedProducts() {
           const minPrice = prices.length > 0 ? Math.min(...prices) : null;
 
           return (
-            <Link
+            <Reveal
               key={product.id}
-              href={`/catalogo/${product.brand.slug}/${product.id}`}
-              className={styles.featuredCard}
+              delay={index * 0.08}
+              className={styles.featuredRevealItem}
             >
-              {cover ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={cover} alt={product.name} className={styles.featuredImage} />
-              ) : (
-                <div className={styles.featuredImagePlaceholder} />
-              )}
-              <div className={styles.featuredInfo}>
-                <span className={styles.featuredBrand}>{product.brand.name}</span>
-                <strong>{product.name}</strong>
-                {minPrice != null && (
-                  <span className={styles.featuredPrice}>
-                    {hasVariants ? "Desde " : ""}${minPrice}
-                  </span>
+              <Link
+                href={`/catalogo/${product.brand.slug}/${product.id}`}
+                className={styles.featuredCard}
+              >
+                {cover ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={cover} alt={product.name} className={styles.featuredImage} />
+                ) : (
+                  <div className={styles.featuredImagePlaceholder} />
                 )}
-              </div>
-            </Link>
+                <div className={styles.featuredInfo}>
+                  <span className={styles.featuredBrand}>{product.brand.name}</span>
+                  <strong>{product.name}</strong>
+                  {minPrice != null && (
+                    <span className={styles.featuredPrice}>
+                      {hasVariants ? "Desde " : ""}${minPrice}
+                    </span>
+                  )}
+                </div>
+              </Link>
+            </Reveal>
           );
         })}
       </div>

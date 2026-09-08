@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { AnimatePresence, motion } from "motion/react";
 import styles from "./catalogo.module.css";
 
 export interface VariantInfo {
@@ -98,18 +99,29 @@ export function ProductDetail({
   const mainImage = images[imageIndex] ?? images[0];
 
   return (
-    <div className={styles.detailLayout}>
+    <motion.div
+      className={styles.detailLayout}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+    >
       <div className={styles.detailImageColumn}>
-        {mainImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={mainImage}
-            alt={productName}
-            className={styles.detailCarouselImage}
-          />
-        ) : (
-          <div className={styles.detailImagePlaceholder}>{brandName}</div>
-        )}
+        <AnimatePresence mode="wait">
+          {mainImage ? (
+            <motion.img
+              key={mainImage}
+              src={mainImage}
+              alt={productName}
+              className={styles.detailCarouselImage}
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              transition={{ duration: 0.28, ease: "easeOut" }}
+            />
+          ) : (
+            <div className={styles.detailImagePlaceholder}>{brandName}</div>
+          )}
+        </AnimatePresence>
 
         {images.length > 1 && (
           <div className={styles.thumbRow}>
@@ -137,7 +149,17 @@ export function ProductDetail({
           <h1 className={styles.detailTitle}>{productName}</h1>
 
           {current.price != null && (
-            <span className={styles.detailPrice}>${current.price}</span>
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={current.price}
+                className={styles.detailPrice}
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25 }}
+              >
+                ${current.price}
+              </motion.span>
+            </AnimatePresence>
           )}
 
           {description && <p className={styles.detailDescription}>{description}</p>}
@@ -147,17 +169,18 @@ export function ProductDetail({
               <span className={styles.optionLabel}>Capacidad</span>
               <div className={styles.variantOptions}>
                 {capacities.map((capacity) => (
-                  <button
+                  <motion.button
                     key={capacity}
                     type="button"
                     title={capacity}
+                    whileTap={{ scale: 0.94 }}
                     className={`${styles.variantPill} ${
                       current.capacity === capacity ? styles.variantPillActive : ""
                     }`}
                     onClick={() => pickCapacity(capacity)}
                   >
                     {capacity}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </div>
@@ -170,11 +193,13 @@ export function ProductDetail({
               </span>
               <div className={styles.variantOptions}>
                 {colorsForCapacity.map((variant) => (
-                  <button
+                  <motion.button
                     key={variant.id}
                     type="button"
                     title={variant.color ?? undefined}
                     aria-label={variant.color ?? "Color"}
+                    whileTap={{ scale: 0.88 }}
+                    whileHover={{ scale: 1.08 }}
                     onClick={() => selectVariant(variant.id)}
                     className={`${styles.colorSwatch} ${
                       variant.id === current.id ? styles.colorSwatchActive : ""
@@ -200,6 +225,6 @@ export function ProductDetail({
           </p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

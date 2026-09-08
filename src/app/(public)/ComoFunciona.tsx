@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/Reveal";
 import styles from "./home.module.css";
 
 const STEPS = [
@@ -24,14 +25,18 @@ const STEPS = [
 export function ComoFunciona() {
   return (
     <section id="como-funciona" className={styles.stepsSection}>
-      <h2 className={styles.sectionTitle}>¿Cómo funciona?</h2>
+      <Reveal>
+        <h2 className={styles.sectionTitle}>¿Cómo funciona?</h2>
+      </Reveal>
       <div className={styles.stepsGrid}>
         {STEPS.map((step, index) => (
-          <div key={step.title} className={styles.stepCard}>
-            <span className={styles.stepNumber}>{index + 1}</span>
-            <h3>{step.title}</h3>
-            <p>{step.description}</p>
-          </div>
+          <Reveal key={step.title} delay={index * 0.1}>
+            <div className={styles.stepCard}>
+              <span className={styles.stepNumber}>{index + 1}</span>
+              <h3>{step.title}</h3>
+              <p>{step.description}</p>
+            </div>
+          </Reveal>
         ))}
       </div>
     </section>

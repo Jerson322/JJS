@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/Reveal";
 import styles from "./home.module.css";
 
 const FAQS = [
@@ -30,13 +31,17 @@ const FAQS = [
 export function Faq() {
   return (
     <section id="faq" className={styles.faqSection}>
-      <h2 className={styles.sectionTitle}>Preguntas frecuentes</h2>
+      <Reveal>
+        <h2 className={styles.sectionTitle}>Preguntas frecuentes</h2>
+      </Reveal>
       <div className={styles.faqList}>
-        {FAQS.map((faq) => (
-          <details key={faq.question} className={styles.faqItem}>
-            <summary>{faq.question}</summary>
-            <p>{faq.answer}</p>
-          </details>
+        {FAQS.map((faq, index) => (
+          <Reveal key={faq.question} delay={index * 0.06} y={16}>
+            <details className={styles.faqItem}>
+              <summary>{faq.question}</summary>
+              <p>{faq.answer}</p>
+            </details>
+          </Reveal>
         ))}
       </div>
     </section>
