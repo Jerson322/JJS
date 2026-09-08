@@ -1,0 +1,91 @@
+.layout {
+  min-height: calc(100vh - 65px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.branding {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 4rem 3.5rem;
+  color: #fff;
+  background: radial-gradient(
+      circle at 20% 20%,
+      rgba(255, 255, 255, 0.12),
+      transparent 45%
+    ),
+    linear-gradient(160deg, #0071e3, #1d1d1f 75%);
+}
+
+@media (max-width: 860px) {
+  .branding {
+    display: none;
+  }
+}
+
+.brandingEyebrow {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.75;
+  font-weight: 600;
+}
+
+.brandingTitle {
+  font-size: clamp(1.8rem, 1.4rem + 1.6vw, 2.6rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  max-width: 22rem;
+  color: #fff;
+}
+
+.brandingList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  opacity: 0.9;
+  font-size: 0.95rem;
+}
+
+.formSide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+}
+
+.formCard {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formCard h1 {
+  margin: 0;
+}
+
+.formCard :global(.button) {
+  width: 100%;
+}
+
+.formFootnote {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.formFootnote a {
+  color: var(--accent);
+  font-weight: 500;
+}
