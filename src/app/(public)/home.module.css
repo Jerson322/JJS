@@ -5,7 +5,8 @@
   align-items: center;
   justify-content: center;
   gap: 2.25rem;
-  padding: 4rem 1.5rem;
+  margin-top: calc(-1 * var(--header-space));
+  padding: calc(var(--header-space) + 3rem) 1.5rem 4rem;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -222,6 +223,14 @@
   .searchButton {
     padding: 0.65rem 1.1rem;
     font-size: 0.9rem;
+  }
+
+  .searchGlow {
+    display: none;
+  }
+
+  .searchRing {
+    padding: 1.5px;
   }
 }
 
