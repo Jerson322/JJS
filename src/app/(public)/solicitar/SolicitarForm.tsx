@@ -54,18 +54,11 @@ export function SolicitarForm({ prefill, isAuthenticated }: SolicitarFormProps) 
   const productUrlRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const [isDetecting, startDetecting] = useTransition();
   const [detectError, setDetectError] = useState<string | null>(null);
   const [preview, setPreview] = useState<ExtractedProductInfo | null>(null);
   const [image, setImage] = useState<string | null>(readInitialImage);
-
-  useEffect(() => {
-    if (imageInputRef.current) {
-      imageInputRef.current.value = image ?? "";
-    }
-  }, [image]);
 
   async function handlePaste(event: React.ClipboardEvent) {
     const pasted = await extractPastedImage(event.clipboardData);
@@ -122,6 +115,11 @@ export function SolicitarForm({ prefill, isAuthenticated }: SolicitarFormProps) 
       try {
         const pending: Record<string, string> = JSON.parse(pendingRaw);
         for (const [name, value] of Object.entries(pending)) {
+          // imageDataUrl is React-controlled via the `image` state
+          // (readInitialImage() already picked it up above); setting the
+          // DOM value directly here would just get overwritten on the
+          // next render.
+          if (name === "imageDataUrl") continue;
           const field = formRef.current.elements.namedItem(name);
           if (
             field instanceof HTMLInputElement ||
@@ -162,7 +160,7 @@ export function SolicitarForm({ prefill, isAuthenticated }: SolicitarFormProps) 
       onPaste={handlePaste}
       className="stack"
     >
-      <input ref={imageInputRef} type="hidden" name="imageDataUrl" defaultValue="" />
+      <input type="hidden" name="imageDataUrl" value={image ?? ""} readOnly />
       {!isAuthenticated && (
         <p className={styles.hint}>
           Puedes llenar todo esto sin cuenta. Solo te pediremos crear una al
