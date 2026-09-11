@@ -36,7 +36,6 @@ export function HeroSearch() {
               onChange={(event) => setValue(event.target.value)}
               placeholder="Pega un link o describe lo que quieres importar..."
               aria-label="Buscar o pegar link de producto"
-              autoFocus
             />
             <button type="submit" className={styles.searchButton}>
               Buscar

@@ -216,6 +216,27 @@
   opacity: 0.82;
 }
 
+@media (max-width: 560px) {
+  .searchWrapper {
+    padding: 0.3rem 0.3rem 0.3rem 1rem;
+    gap: 0.3rem;
+  }
+
+  .searchIcon {
+    display: none;
+  }
+
+  .searchInput {
+    font-size: 0.95rem;
+    padding: 0.7rem 0;
+  }
+
+  .searchButton {
+    padding: 0.65rem 1.1rem;
+    font-size: 0.9rem;
+  }
+}
+
 .hint {
   font-size: 0.9rem;
   color: var(--muted);

@@ -27,40 +27,42 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
-        <ScrollNav>
-          <Link href="/">Tienda Importación</Link>
-          <div className="links">
-            <Link href="/solicitar">Solicitar</Link>
-            <Link href="/#como-funciona">Cómo funciona</Link>
-            <Link href="/#faq">FAQ</Link>
-            {session?.user ? (
-              <>
-                <Link href="/dashboard">Mi cuenta</Link>
-                {(session.user.role === "STAFF" ||
-                  session.user.role === "ADMIN") && (
-                  <Link href="/admin/catalogo">Panel admin</Link>
-                )}
-                <form
-                  action={async () => {
-                    "use server";
-                    await signOut({ redirectTo: "/" });
-                  }}
-                >
-                  <button className="button secondary" type="submit">
-                    Salir
-                  </button>
-                </form>
-              </>
-            ) : (
-              <>
-                <Link href="/login">Iniciar sesión</Link>
-                <Link href="/registro" className="button">
-                  Crear cuenta
-                </Link>
-              </>
-            )}
-          </div>
-        </ScrollNav>
+        <ScrollNav
+          logo={<Link href="/">Tienda Importación</Link>}
+          links={
+            <>
+              <Link href="/solicitar">Solicitar</Link>
+              <Link href="/#como-funciona">Cómo funciona</Link>
+              <Link href="/#faq">FAQ</Link>
+              {session?.user ? (
+                <>
+                  <Link href="/dashboard">Mi cuenta</Link>
+                  {(session.user.role === "STAFF" ||
+                    session.user.role === "ADMIN") && (
+                    <Link href="/admin/catalogo">Panel admin</Link>
+                  )}
+                  <form
+                    action={async () => {
+                      "use server";
+                      await signOut({ redirectTo: "/" });
+                    }}
+                  >
+                    <button className="button secondary" type="submit">
+                      Salir
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <>
+                  <Link href="/login">Iniciar sesión</Link>
+                  <Link href="/registro" className="button">
+                    Crear cuenta
+                  </Link>
+                </>
+              )}
+            </>
+          }
+        />
         <main>{children}</main>
         <Footer />
       </body>
