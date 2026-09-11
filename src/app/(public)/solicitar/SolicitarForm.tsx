@@ -8,6 +8,8 @@ import {
 } from "@/server/actions/purchase-request.actions";
 import { extractProductInfoAction } from "@/server/actions/product-extraction.actions";
 import type { ExtractedProductInfo } from "@/server/services/product-extraction/extract-product-info";
+import { ImagePicker } from "@/components/ImagePicker";
+import { PENDING_IMAGE_KEY, extractPastedImage } from "@/lib/compress-image";
 import styles from "./solicitar.module.css";
 
 const initialState: SubmitPurchaseRequestState = {};
@@ -15,6 +17,24 @@ const initialState: SubmitPurchaseRequestState = {};
 const URL_PATTERN = /^https?:\/\//i;
 
 const PENDING_STORAGE_KEY = "pendingSolicitud";
+
+function readInitialImage(): string | null {
+  if (typeof window === "undefined") return null;
+
+  const pendingImage = sessionStorage.getItem(PENDING_IMAGE_KEY);
+  if (pendingImage) return pendingImage;
+
+  const pendingRaw = sessionStorage.getItem(PENDING_STORAGE_KEY);
+  if (pendingRaw) {
+    try {
+      const pending: Record<string, string> = JSON.parse(pendingRaw);
+      if (pending.imageDataUrl) return pending.imageDataUrl;
+    } catch {
+      // Ignore corrupted storage, user just retypes the form.
+    }
+  }
+  return null;
+}
 
 interface SolicitarFormProps {
   prefill?: string;
@@ -34,10 +54,26 @@ export function SolicitarForm({ prefill, isAuthenticated }: SolicitarFormProps) 
   const productUrlRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const valueRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const [isDetecting, startDetecting] = useTransition();
   const [detectError, setDetectError] = useState<string | null>(null);
   const [preview, setPreview] = useState<ExtractedProductInfo | null>(null);
+  const [image, setImage] = useState<string | null>(readInitialImage);
+
+  useEffect(() => {
+    if (imageInputRef.current) {
+      imageInputRef.current.value = image ?? "";
+    }
+  }, [image]);
+
+  async function handlePaste(event: React.ClipboardEvent) {
+    const pasted = await extractPastedImage(event.clipboardData);
+    if (pasted) {
+      event.preventDefault();
+      setImage(pasted);
+    }
+  }
 
   function handleDetect(urlOverride?: string) {
     const url = (urlOverride ?? productUrlRef.current?.value ?? "").trim();
@@ -73,6 +109,11 @@ export function SolicitarForm({ prefill, isAuthenticated }: SolicitarFormProps) 
   }
 
   useEffect(() => {
+    // Consume the hero-search handoff now that readInitialImage() already
+    // picked it up for the image state above.
+    const hadPendingImage = sessionStorage.getItem(PENDING_IMAGE_KEY) != null;
+    sessionStorage.removeItem(PENDING_IMAGE_KEY);
+
     // If the user comes back from login/registro, restore what they had
     // typed before we sent them there to finish creating their account.
     const pendingRaw = sessionStorage.getItem(PENDING_STORAGE_KEY);
@@ -97,6 +138,8 @@ export function SolicitarForm({ prefill, isAuthenticated }: SolicitarFormProps) 
 
     if (prefillIsUrl && prefill) {
       handleDetect(prefill);
+    } else if (!prefill && hadPendingImage && descriptionRef.current) {
+      descriptionRef.current.value = "Producto en la imagen adjunta";
     }
     // Only run once, when the form first mounts.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -112,7 +155,14 @@ export function SolicitarForm({ prefill, isAuthenticated }: SolicitarFormProps) 
   }
 
   return (
-    <form ref={formRef} action={formAction} onSubmit={handleSubmit} className="stack">
+    <form
+      ref={formRef}
+      action={formAction}
+      onSubmit={handleSubmit}
+      onPaste={handlePaste}
+      className="stack"
+    >
+      <input ref={imageInputRef} type="hidden" name="imageDataUrl" defaultValue="" />
       {!isAuthenticated && (
         <p className={styles.hint}>
           Puedes llenar todo esto sin cuenta. Solo te pediremos crear una al
@@ -121,6 +171,14 @@ export function SolicitarForm({ prefill, isAuthenticated }: SolicitarFormProps) 
       )}
       <fieldset className={styles.fieldset}>
         <legend>¿Qué quieres importar?</legend>
+
+        <div className="field">
+          <label>Foto del producto (opcional)</label>
+          <p className={styles.hint} style={{ marginTop: 0 }}>
+            Si no tienes el link, pega una imagen (Ctrl+V) o adjúntala.
+          </p>
+          <ImagePicker value={image} onChange={setImage} />
+        </div>
 
         <div className="field">
           <label htmlFor="productUrl">Link del producto (opcional)</label>

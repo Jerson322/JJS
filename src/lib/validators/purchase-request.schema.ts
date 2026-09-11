@@ -11,9 +11,17 @@ export const addressSchema = z.object({
   phone: z.string().min(6),
 });
 
+const imageDataUrlSchema = z
+  .string()
+  .regex(/^data:image\/(png|jpe?g|webp|gif);base64,/, "Imagen inválida.")
+  .max(6_000_000, "La imagen es demasiado grande.")
+  .optional()
+  .or(z.literal(""));
+
 export const createPurchaseRequestSchema = z.object({
   productUrl: z.string().url().optional().or(z.literal("")),
   description: z.string().min(10),
+  imageDataUrl: imageDataUrlSchema,
   quantity: z.coerce.number().int().min(1).default(1),
   estimatedDeclaredValue: z.coerce.number().positive().optional(),
   notes: z.string().optional(),
@@ -23,6 +31,7 @@ export const createPurchaseRequestSchema = z.object({
 export const submitPurchaseRequestSchema = z.object({
   productUrl: z.string().url().optional().or(z.literal("")),
   description: z.string().min(10),
+  imageDataUrl: imageDataUrlSchema,
   quantity: z.coerce.number().int().min(1).default(1),
   estimatedDeclaredValue: z.coerce.number().positive().optional(),
   notes: z.string().optional(),

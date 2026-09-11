@@ -83,6 +83,7 @@ model PurchaseRequest {
   assignedStaff          User?         @relation("StaffHandler", fields: [assignedStaffId], references: [id])
   productUrl             String?
   description            String
+  imageDataUrl           String?
   quantity               Int           @default(1)
   estimatedDeclaredValue Decimal?      @db.Decimal(10, 2)
   destinationAddressId   String

@@ -188,6 +188,26 @@
   color: var(--muted);
 }
 
+.searchAttach {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.searchAttach:hover {
+  background: var(--surface);
+  color: var(--accent);
+}
+
 .searchButton {
   flex-shrink: 0;
   border: none;
@@ -232,6 +252,50 @@
   .searchRing {
     padding: 1.5px;
   }
+
+  .searchAttach {
+    width: 32px;
+    height: 32px;
+  }
+
+  .searchAttach svg {
+    width: 17px;
+    height: 17px;
+  }
+}
+
+.searchImagePreview {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.searchImagePreview img {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.searchImagePreview button {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 999px;
+  background: var(--border-strong);
+  color: var(--foreground);
+  cursor: pointer;
+  line-height: 1;
 }
 
 .hint {

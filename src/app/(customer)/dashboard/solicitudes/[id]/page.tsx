@@ -32,6 +32,18 @@ export default async function SolicitudDetailPage(
 
       <div className="card stack">
         <h2>Detalle</h2>
+        {request.imageDataUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={request.imageDataUrl}
+            alt="Foto del producto solicitado"
+            style={{
+              maxWidth: 220,
+              borderRadius: "var(--radius-md)",
+              border: "1px solid var(--border)",
+            }}
+          />
+        )}
         {request.productUrl && (
           <p>
             Producto:{" "}

@@ -30,6 +30,7 @@ export async function submitPurchaseRequest(
   const parsed = submitPurchaseRequestSchema.safeParse({
     productUrl: formData.get("productUrl") || "",
     description: formData.get("description"),
+    imageDataUrl: formData.get("imageDataUrl") || "",
     quantity: formData.get("quantity") || 1,
     estimatedDeclaredValue: formData.get("estimatedDeclaredValue") || undefined,
     notes: formData.get("notes") || undefined,
@@ -69,6 +70,7 @@ export async function submitPurchaseRequest(
         customerId: user.id,
         productUrl: requestData.productUrl || null,
         description: requestData.description,
+        imageDataUrl: requestData.imageDataUrl || null,
         quantity: requestData.quantity,
         estimatedDeclaredValue: requestData.estimatedDeclaredValue,
         notes: requestData.notes,
