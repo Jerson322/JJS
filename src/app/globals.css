@@ -16,6 +16,7 @@
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 22px;
+  --header-space: 5.5rem;
   --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont,
     "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 }
@@ -76,6 +77,7 @@ body {
 
 body > main {
   flex: 1;
+  padding-top: var(--header-space);
 }
 
 * {
@@ -255,17 +257,31 @@ a.card:hover {
 }
 
 .nav {
-  position: sticky;
-  top: 0;
-  z-index: 50;
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  width: calc(100% - 2rem);
+  max-width: 1120px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.85rem 1.5rem;
-  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
   background: var(--nav-bg);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 640px) {
+  .nav {
+    top: 0.6rem;
+    width: calc(100% - 1.2rem);
+    padding: 0.6rem 1.1rem;
+  }
 }
 
 .nav a {

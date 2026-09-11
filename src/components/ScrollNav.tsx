@@ -8,12 +8,12 @@ interface ScrollNavProps {
 
 export function ScrollNav({ children }: ScrollNavProps) {
   const { scrollY } = useScroll();
-  const shadowOpacity = useTransform(scrollY, [0, 80], [0, 1]);
+  const shadowAlpha = useTransform(scrollY, [0, 120], [0.08, 0.16]);
   const boxShadow = useTransform(
-    shadowOpacity,
-    (v) => `0 1px 0 rgba(0,0,0,${v * 0.08})`,
+    shadowAlpha,
+    (v) => `0 8px 30px rgba(0,0,0,${v})`,
   );
-  const paddingBlock = useTransform(scrollY, [0, 80], [0.85, 0.6]);
+  const paddingBlock = useTransform(scrollY, [0, 120], [0.75, 0.55]);
 
   return (
     <motion.nav
