@@ -4,6 +4,7 @@ import { STATUS_LABELS } from "@/lib/status-labels";
 import { statusBadgeClass } from "@/lib/status-colors";
 import { requireRole } from "@/server/auth/rbac";
 import { prisma } from "@/server/db/client";
+import { ZoomableImage } from "@/components/ZoomableImage";
 import { AssignStaffForm } from "./AssignStaffForm";
 import { StatusControl } from "./StatusControl";
 import { QuoteForm } from "./QuoteForm";
@@ -68,19 +69,11 @@ export default async function AdminSolicitudDetailPage(
         <h2>Detalle del producto</h2>
         {request.imageDataUrl && (
           <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", alignItems: "flex-start" }}>
-            <a href={request.imageDataUrl} target="_blank" rel="noreferrer">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={request.imageDataUrl}
-                alt="Foto del producto solicitado"
-                style={{
-                  maxWidth: 240,
-                  borderRadius: "var(--radius-md)",
-                  border: "1px solid var(--border)",
-                  cursor: "zoom-in",
-                }}
-              />
-            </a>
+            <ZoomableImage
+              src={request.imageDataUrl}
+              alt="Foto del producto solicitado"
+              width={240}
+            />
             <a
               href={request.imageDataUrl}
               download="foto-producto.jpg"

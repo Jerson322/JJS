@@ -3,6 +3,7 @@ import { STATUS_LABELS } from "@/lib/status-labels";
 import { statusBadgeClass } from "@/lib/status-colors";
 import { requireUser } from "@/server/auth/rbac";
 import { prisma } from "@/server/db/client";
+import { ZoomableImage } from "@/components/ZoomableImage";
 
 export default async function SolicitudDetailPage(
   props: PageProps<"/dashboard/solicitudes/[id]">,
@@ -34,19 +35,11 @@ export default async function SolicitudDetailPage(
         <h2>Detalle</h2>
         {request.imageDataUrl && (
           <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", alignItems: "flex-start" }}>
-            <a href={request.imageDataUrl} target="_blank" rel="noreferrer">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={request.imageDataUrl}
-                alt="Foto del producto solicitado"
-                style={{
-                  maxWidth: 220,
-                  borderRadius: "var(--radius-md)",
-                  border: "1px solid var(--border)",
-                  cursor: "zoom-in",
-                }}
-              />
-            </a>
+            <ZoomableImage
+              src={request.imageDataUrl}
+              alt="Foto del producto solicitado"
+              width={220}
+            />
             <a
               href={request.imageDataUrl}
               download="foto-producto.jpg"
