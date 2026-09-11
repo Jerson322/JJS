@@ -67,12 +67,29 @@ export default async function AdminSolicitudDetailPage(
       <div className="card stack">
         <h2>Detalle del producto</h2>
         {request.imageDataUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={request.imageDataUrl}
-            alt="Foto del producto solicitado"
-            style={{ maxWidth: 240, borderRadius: "var(--radius-md)", border: "1px solid var(--border)" }}
-          />
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", alignItems: "flex-start" }}>
+            <a href={request.imageDataUrl} target="_blank" rel="noreferrer">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={request.imageDataUrl}
+                alt="Foto del producto solicitado"
+                style={{
+                  maxWidth: 240,
+                  borderRadius: "var(--radius-md)",
+                  border: "1px solid var(--border)",
+                  cursor: "zoom-in",
+                }}
+              />
+            </a>
+            <a
+              href={request.imageDataUrl}
+              download="foto-producto.jpg"
+              className="button secondary"
+              style={{ fontSize: "0.85rem", padding: "0.4rem 0.9rem" }}
+            >
+              Descargar imagen
+            </a>
+          </div>
         )}
         {request.productUrl && (
           <p>
