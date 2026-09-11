@@ -67,18 +67,6 @@
   background: rgba(6, 182, 212, 0.14);
 }
 
-@media (prefers-color-scheme: dark) {
-  .heroBlobBlue {
-    background: rgba(41, 151, 255, 0.3);
-  }
-  .heroBlobPurple {
-    background: rgba(124, 58, 237, 0.26);
-  }
-  .heroBlobCyan {
-    background: rgba(6, 182, 212, 0.2);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .heroBlobBlue,
   .heroBlobPurple,

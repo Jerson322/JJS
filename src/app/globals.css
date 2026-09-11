@@ -21,30 +21,10 @@
     "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #000000;
-    --surface: #1d1d1f;
-    --foreground: #f5f5f7;
-    --muted: #86868b;
-    --border: rgba(255, 255, 255, 0.14);
-    --border-strong: rgba(255, 255, 255, 0.22);
-    --accent: #2997ff;
-    --accent-hover: #57adff;
-    --accent-soft: rgba(41, 151, 255, 0.16);
-    --danger: #ff6961;
-    --success: #32d74b;
-    --warning: #ffc02e;
-    --nav-bg: rgba(0, 0, 0, 0.72);
-    --card-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
-  }
-
-  html {
-    color-scheme: dark;
-  }
-}
-
+/* Tema fijo en claro a proposito: el sitio debe verse igual en todos
+   los dispositivos sin importar la configuracion de cada uno. */
 html {
+  color-scheme: light;
   height: 100%;
   scroll-behavior: smooth;
 }
