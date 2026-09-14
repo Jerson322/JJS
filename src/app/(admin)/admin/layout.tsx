@@ -18,6 +18,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
       >
         <Link href="/admin/solicitudes">Solicitudes</Link>
         <Link href="/admin/catalogo">Catálogo</Link>
+        <Link href="/admin/atajos-busqueda">Atajos de búsqueda</Link>
       </div>
       {children}
     </div>

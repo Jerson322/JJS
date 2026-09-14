@@ -172,6 +172,24 @@ model Brand {
   @@map("brands")
 }
 
+// Curated keyword -> URL shortcuts (e.g. "air force one" -> Nike's Air
+// Force 1 category page) so the search bar can point customers to a
+// precise, real page without us having to scrape/mirror entire catalogs.
+model SearchShortcut {
+  id         String   @id @default(cuid())
+  brandLabel String
+  label      String
+  url        String
+  keywords   String[] @default([])
+  isActive   Boolean  @default(true)
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([isActive])
+  @@map("search_shortcuts")
+}
+
 model CatalogProduct {
   id          String                  @id @default(cuid())
   brandId     String

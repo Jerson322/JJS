@@ -137,6 +137,98 @@ async function main() {
     }
   }
 
+  const nikeShortcuts = [
+    {
+      label: "SHOES",
+      url: "https://www.nike.com/w/shoes-20db4z38l5kzy7ok",
+      keywords: ["zapatillas", "zapatos", "shoes", "tenis", "calzado", "nike zapatillas", "nike zapatos"],
+      sortOrder: 0,
+    },
+    {
+      label: "AIR FORCE 1",
+      url: "https://www.nike.com/w/air-force-1-shoes-1kf3iz38l5kz5sj3yzy7ok",
+      keywords: ["air force 1", "air force one", "airforce 1", "af1", "zapatillas air force", "nike air force"],
+      sortOrder: 1,
+    },
+    {
+      label: "AIR MAX",
+      url: "https://www.nike.com/w/air-max-shoes-a6d8hzv660zvyaizy7ok",
+      keywords: ["air max", "airmax", "zapatillas air max", "nike air max"],
+      sortOrder: 2,
+    },
+    {
+      label: "DUNK",
+      url: "https://www.nike.com/w/dunk-1v79xz90aoh",
+      keywords: ["dunk", "dunks", "nike dunk", "zapatillas dunk"],
+      sortOrder: 3,
+    },
+    {
+      label: "VOMERO",
+      url: "https://www.nike.com/w/zoom-vomero-shoes-13jrmz7gee1zxw4hzy7ok",
+      keywords: ["vomero", "zoom vomero", "nike vomero", "zapatillas vomero"],
+      sortOrder: 4,
+    },
+    {
+      label: "PEGASUS",
+      url: "https://www.nike.com/w/nike-pegasus-4heq9z7yfbz8nexh",
+      keywords: ["pegasus", "nike pegasus", "zapatillas pegasus", "air zoom pegasus"],
+      sortOrder: 5,
+    },
+    {
+      label: "P-6000",
+      url: "https://www.nike.com/w/nike-p-6000-shoes-4ff6cz77wv6z8nb9wzy7ok",
+      keywords: ["p6000", "p-6000", "nike p6000", "zapatillas p6000"],
+      sortOrder: 6,
+    },
+    {
+      label: "CORTEZ",
+      url: "https://www.nike.com/w/cortez-byfx",
+      keywords: ["cortez", "nike cortez", "zapatillas cortez"],
+      sortOrder: 7,
+    },
+    {
+      label: "SHOX",
+      url: "https://www.nike.com/w/shox-13jrmz58jtoz7e8jq",
+      keywords: ["shox", "nike shox", "zapatillas shox"],
+      sortOrder: 8,
+    },
+    {
+      label: "FREE RN",
+      url: "https://www.nike.com/w/free-rn-5e1x6z9w4ggznik1",
+      keywords: ["free rn", "nike free", "free run", "zapatillas free rn"],
+      sortOrder: 9,
+    },
+    {
+      label: "METCON",
+      url: "https://www.nike.com/w/metcon-3yxqs",
+      keywords: ["metcon", "nike metcon", "zapatillas metcon", "entrenamiento metcon"],
+      sortOrder: 10,
+    },
+    {
+      label: "ALPHAFLY",
+      url: "https://www.nike.com/w/road-nike-alphafly-running-shoes-1tp17z37v7jz8kwewzy7ok",
+      keywords: ["alphafly", "nike alphafly", "alphafly running", "zapatillas alphafly"],
+      sortOrder: 11,
+    },
+    {
+      label: "ROAD RACING",
+      url: "https://www.nike.com/w/road-racing-shoes-9gdhkzy7ok/",
+      keywords: ["road racing", "running de carretera", "zapatillas running", "running shoes"],
+      sortOrder: 12,
+    },
+  ];
+
+  for (const shortcut of nikeShortcuts) {
+    const existing = await prisma.searchShortcut.findFirst({
+      where: { url: shortcut.url },
+    });
+    if (!existing) {
+      await prisma.searchShortcut.create({
+        data: { brandLabel: "Nike", ...shortcut },
+      });
+    }
+  }
+
   console.log("Seed completado. Admin: admin@tienda.local / Admin123!");
 }
 

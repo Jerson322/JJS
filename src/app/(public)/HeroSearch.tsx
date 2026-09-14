@@ -1,20 +1,44 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   PENDING_IMAGE_KEY,
   compressImageFile,
   extractPastedImage,
 } from "@/lib/compress-image";
+import { searchShortcutsAction } from "@/server/actions/search-shortcut.actions";
+import type { RankedShortcut } from "@/server/services/search-shortcuts/rank";
 import styles from "./home.module.css";
 
 export function HeroSearch() {
   const [value, setValue] = useState("");
   const [image, setImage] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<RankedShortcut[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const trimmed = value.trim();
+    if (trimmed.length < 2) return;
+
+    const timeout = setTimeout(() => {
+      searchShortcutsAction(trimmed)
+        .then(setSuggestions)
+        .catch(() => setSuggestions([]));
+    }, 220);
+
+    return () => clearTimeout(timeout);
+  }, [value]);
+
+  function handleValueChange(next: string) {
+    setValue(next);
+    if (next.trim().length < 2) {
+      setSuggestions([]);
+    }
+  }
 
   async function handlePaste(event: React.ClipboardEvent) {
     const pasted = await extractPastedImage(event.clipboardData);
@@ -53,6 +77,8 @@ export function HeroSearch() {
     router.push(`/solicitar${query}`);
   }
 
+  const showDropdown = showSuggestions && suggestions.length > 0;
+
   return (
     <form className={styles.searchForm} onSubmit={handleSubmit} onPaste={handlePaste}>
       <div className={styles.searchOuter}>
@@ -69,9 +95,12 @@ export function HeroSearch() {
               className={styles.searchInput}
               type="text"
               value={value}
-              onChange={(event) => setValue(event.target.value)}
+              onChange={(event) => handleValueChange(event.target.value)}
+              onFocus={() => setShowSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
               placeholder="Pega un link, describe el producto o pega una imagen..."
               aria-label="Buscar, pegar link o imagen de producto"
+              autoComplete="off"
             />
             <button
               type="button"
@@ -102,6 +131,24 @@ export function HeroSearch() {
             </button>
           </div>
         </div>
+
+        {showDropdown && (
+          <ul className={styles.searchSuggestions} role="listbox">
+            {suggestions.map((suggestion) => (
+              <li key={suggestion.id}>
+                <a
+                  href={suggestion.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={styles.searchSuggestionItem}
+                >
+                  <span className={styles.searchSuggestionBrand}>{suggestion.brandLabel}</span>
+                  <span className={styles.searchSuggestionLabel}>{suggestion.label}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <input
