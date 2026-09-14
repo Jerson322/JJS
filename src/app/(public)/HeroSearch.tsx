@@ -138,8 +138,6 @@ export function HeroSearch() {
               <li key={suggestion.id}>
                 <a
                   href={suggestion.url}
-                  target="_blank"
-                  rel="noreferrer"
                   className={styles.searchSuggestionItem}
                 >
                   <span className={styles.searchSuggestionBrand}>{suggestion.brandLabel}</span>
