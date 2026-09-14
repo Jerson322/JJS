@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import {
   PENDING_IMAGE_KEY,
@@ -11,14 +12,42 @@ import { searchShortcutsAction } from "@/server/actions/search-shortcut.actions"
 import type { RankedShortcut } from "@/server/services/search-shortcuts/rank";
 import styles from "./home.module.css";
 
+interface MenuRect {
+  top: number;
+  left: number;
+  width: number;
+}
+
 export function HeroSearch() {
   const [value, setValue] = useState("");
   const [image, setImage] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<RankedShortcut[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [menuRect, setMenuRect] = useState<MenuRect | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const searchOuterRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  const showDropdown = showSuggestions && suggestions.length > 0;
+
+  useEffect(() => {
+    if (!showDropdown) return;
+
+    function updateRect() {
+      const rect = searchOuterRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setMenuRect({ top: rect.bottom + 10, left: rect.left, width: rect.width });
+    }
+
+    updateRect();
+    window.addEventListener("resize", updateRect);
+    window.addEventListener("scroll", updateRect, true);
+    return () => {
+      window.removeEventListener("resize", updateRect);
+      window.removeEventListener("scroll", updateRect, true);
+    };
+  }, [showDropdown]);
 
   useEffect(() => {
     const trimmed = value.trim();
@@ -77,11 +106,9 @@ export function HeroSearch() {
     router.push(`/solicitar${query}`);
   }
 
-  const showDropdown = showSuggestions && suggestions.length > 0;
-
   return (
     <form className={styles.searchForm} onSubmit={handleSubmit} onPaste={handlePaste}>
-      <div className={styles.searchOuter}>
+      <div className={styles.searchOuter} ref={searchOuterRef}>
         <div className={styles.searchGlow} aria-hidden="true" />
         <div className={styles.searchRing}>
           <div className={styles.searchWrapper}>
@@ -132,22 +159,31 @@ export function HeroSearch() {
           </div>
         </div>
 
-        {showDropdown && (
-          <ul className={styles.searchSuggestions} role="listbox">
+      </div>
+
+      {showDropdown && menuRect && typeof document !== "undefined" &&
+        createPortal(
+          <ul
+            className={styles.searchSuggestions}
+            role="listbox"
+            style={{
+              position: "fixed",
+              top: menuRect.top,
+              left: menuRect.left,
+              width: menuRect.width,
+            }}
+          >
             {suggestions.map((suggestion) => (
               <li key={suggestion.id}>
-                <a
-                  href={suggestion.url}
-                  className={styles.searchSuggestionItem}
-                >
+                <a href={suggestion.url} className={styles.searchSuggestionItem}>
                   <span className={styles.searchSuggestionBrand}>{suggestion.brandLabel}</span>
                   <span className={styles.searchSuggestionLabel}>{suggestion.label}</span>
                 </a>
               </li>
             ))}
-          </ul>
+          </ul>,
+          document.body,
         )}
-      </div>
 
       <input
         ref={fileInputRef}

@@ -9,7 +9,6 @@
   padding: calc(var(--header-space) + 3rem) 1.5rem 4rem;
   text-align: center;
   position: relative;
-  overflow: hidden;
   background: var(--background);
 }
 
@@ -26,6 +25,7 @@
   position: absolute;
   inset: 0;
   z-index: 0;
+  overflow: hidden;
   pointer-events: none;
 }
 
@@ -265,11 +265,7 @@
 }
 
 .searchSuggestions {
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 0;
-  right: 0;
-  z-index: 50;
+  z-index: 200;
   margin: 0;
   padding: 0.5rem;
   list-style: none;
