@@ -175,7 +175,14 @@ export function HeroSearch() {
           >
             {suggestions.map((suggestion) => (
               <li key={suggestion.id}>
-                <a href={suggestion.url} className={styles.searchSuggestionItem}>
+                <a
+                  href={suggestion.url}
+                  className={styles.searchSuggestionItem}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    window.location.href = suggestion.url;
+                  }}
+                >
                   <span className={styles.searchSuggestionBrand}>{suggestion.brandLabel}</span>
                   <span className={styles.searchSuggestionLabel}>{suggestion.label}</span>
                 </a>
