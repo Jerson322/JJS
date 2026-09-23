@@ -176,11 +176,11 @@ export function HeroSearch() {
             {suggestions.map((suggestion) => (
               <li key={suggestion.id}>
                 <a
-                  href={suggestion.url}
+                  href={`/solicitar?prefill=${encodeURIComponent(suggestion.url)}`}
                   className={styles.searchSuggestionItem}
                   onClick={(event) => {
                     event.preventDefault();
-                    window.location.href = suggestion.url;
+                    router.push(`/solicitar?prefill=${encodeURIComponent(suggestion.url)}`);
                   }}
                 >
                   <span className={styles.searchSuggestionBrand}>{suggestion.brandLabel}</span>
