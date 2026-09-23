@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import { Footer } from "@/components/Footer";
 import { ScrollNav } from "@/components/ScrollNav";
+import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { auth, signOut } from "@/server/auth/auth.config";
 import "./globals.css";
 
@@ -19,6 +20,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Tienda de Importación",
   description: "Compramos y te enviamos lo que necesites importar desde tus tiendas favoritas.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0071e3",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -65,6 +70,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         />
         <main>{children}</main>
         <Footer />
+        <ServiceWorkerRegister />
       </body>
     </html>
   );
