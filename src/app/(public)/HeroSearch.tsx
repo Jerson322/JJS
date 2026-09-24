@@ -172,6 +172,14 @@ export function HeroSearch() {
               left: menuRect.left,
               width: menuRect.width,
             }}
+            // Keeps the input focused while the user is clicking inside the
+            // dropdown, so onBlur never fires mid-click. Without this, a
+            // real (non-instant) mouse click races the 150ms onBlur timeout
+            // below: the input blurs on mousedown, and if mouseup/click
+            // lands after the dropdown has already unmounted, the click is
+            // lost. Fast taps/synthetic clicks rarely hit that window, which
+            // is why this only showed up with a real mouse on desktop.
+            onMouseDown={(event) => event.preventDefault()}
           >
             {suggestions.map((suggestion) => (
               <li key={suggestion.id}>
